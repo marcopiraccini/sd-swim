@@ -1,0 +1,54 @@
+{
+  "name": "sd-swim",
+  "version": "0.0.1",
+  "description": "Self- discovery version of SWIM membership protocol",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "lab test",
+    "lint": "eslint .",
+    "depcheck": "dependency-check package.json --unused --no-dev --entry test/*.js --entry index.js",
+    "nsp": "nsp check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcopiraccini/sd-swim.git"
+  },
+  "keywords": [
+    "SWIM",
+    "membership",
+    "discovery"
+  ],
+  "author": {
+    "name": "Marco Piraccini",
+    "email": "marco.piraccini@gmail.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/marcopiraccini/sd-swim/issues"
+  },
+  "homepage": "https://github.com/marcopiraccini/sd-swim#readme",
+  "dependencies": {
+    "charm": "^1.0.2",
+    "protocol-buffers": "^3.2.1"
+  },
+  "devDependencies": {
+    "dependency-check": "^2.5.1",
+    "eslint": "^3.18.0",
+    "eslint-config-standard": "^7.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-node": "^4.2.1",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^2.1.1",
+    "ghooks": "2.0.0",
+    "lab": "13.0.1",
+    "lab-espower-transformer": "1.1.0",
+    "nsp": "^2.6.3",
+    "power-assert": "^1.4.2"
+  },
+  "config": {
+    "ghooks": {
+      "pre-push": "npm run nsp && npm run depcheck && npm test"
+    }
+  }
+}
