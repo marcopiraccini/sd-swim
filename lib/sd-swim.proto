@@ -1,0 +1,14 @@
+enum MessageType {
+  JOIN = 0;
+  UPDATE_JOIN = 1;
+  PING = 2;
+  PING_REQ = 3;
+  SYNC = 4;
+  ACK = 5;
+  UPDATE = 6;
+}
+
+message Msg {
+  required MessageType type = 1;
+  required string payload = 2;
+}

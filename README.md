@@ -20,3 +20,14 @@ Given a node `Mi`, every `T`:
     - `Mi` selects a `k`members randomly and sends a `ping-req(Mj)` message
     - Every node of those, send in turn `ping(Mj)` and returns the answer to `Mi`
 - After `T`, Mi check if an `æck` from `mj` has been received, directly or through one of the `k` members. If not, marks `Mj` as failed and starts the update using the dissemintaion component.
+
+# Protocol
+This implementation uses protobuf https://github.com/mafintosh/protocol-buffers
+The messages are:
+- Join
+- UpdateJoin
+- Ping
+- PingReq
+- Sync
+- Ack
+- Update
