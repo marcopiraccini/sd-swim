@@ -10,12 +10,15 @@ describe('TEST NET COMM - TODO', () => {
 
   it('should test protocol messages', done => {
     var messages = protobuf(fs.readFileSync('./lib/sd-swim.proto'))
-    console.log('messages', messages)
     var buf = messages.Msg.encode({
       type: messages.MessageType.JOIN,
+      target: {
+        host: '1.1.1.1',
+        port: 12345
+      },
       payload: "TEST"
     })
-    console.log(buf.toString()) // should print a buffer
+    messages.Msg.decode(buf)
     done()
   })
 

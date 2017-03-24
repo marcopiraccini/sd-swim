@@ -9,7 +9,7 @@ const {describe, it} = lab
 describe('TEST NET COMM - TODO', () => {
   it('should test communication', done => {
     const net = new Net({})
-    console.log(net)
+    // console.log(net)
     assert.ok(net)
     done()
   })

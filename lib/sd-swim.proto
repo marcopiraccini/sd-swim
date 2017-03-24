@@ -1,3 +1,6 @@
+/**
+ * Supported message types
+ */
 enum MessageType {
   JOIN = 0;
   UPDATE_JOIN = 1;
@@ -8,7 +11,16 @@ enum MessageType {
   UPDATE = 6;
 }
 
+message Target {
+  required string host = 1;
+  optional int32 port = 2;
+}
+
+/**
+ * SD-SWIM message
+ */
 message Msg {
   required MessageType type = 1;
-  required string payload = 2;
+  optional Target target = 2;
+  required string payload = 3;
 }
