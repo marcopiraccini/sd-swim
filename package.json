@@ -30,7 +30,10 @@
   "homepage": "https://github.com/marcopiraccini/sd-swim#readme",
   "dependencies": {
     "charm": "^1.0.2",
-    "protocol-buffers": "^3.2.1"
+    "minimist": "^1.2.0",
+    "pino": "^4.2.2",
+    "protocol-buffers": "^3.2.1",
+    "uuid": "^3.0.1"
   },
   "devDependencies": {
     "dependency-check": "^2.5.1",

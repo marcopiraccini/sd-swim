@@ -22,5 +22,6 @@ message Target {
 message Msg {
   required MessageType type = 1;
   optional Target target = 2;
-  required string payload = 3;
+  optional string token = 3;
+  required string payload = 4;
 }

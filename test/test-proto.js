@@ -9,7 +9,7 @@ const {describe, it} = lab
 describe('TEST NET COMM - TODO', () => {
 
   it('should test protocol messages', done => {
-    var messages = protobuf(fs.readFileSync('./lib/sd-swim.proto'))
+    var messages = protobuf(fs.readFileSync('./lib/proto/sd-swim.proto'))
     var buf = messages.Msg.encode({
       type: messages.MessageType.JOIN,
       target: {
