@@ -6,8 +6,6 @@ const SDSwim = require('./lib/sd-swim')
 function start () {
   const logger = pino()
   const info = logger.info.bind(logger)
-
-  console.log(process.argv)
   const argv = minimist(process.argv.slice(2), {
     integer: ['port'],
     alias: {
@@ -67,6 +65,8 @@ function start () {
   // swim.on('up', (peer) => {
   //   info({ id: baseswim.whoami() }, 'I am up')
   // })
+
+  sdswim.start()
 }
 
 if (require.main === module) {
