@@ -3,9 +3,12 @@ const minimist = require('minimist')
 const SDSwim = require('./lib/sd-swim')
 
 /* eslint no-console:0 */
+
 function start () {
   const logger = pino()
   const info = logger.info.bind(logger)
+  const error = logger.error.bind(logger)
+
   const argv = minimist(process.argv.slice(2), {
     integer: ['port'],
     alias: {
@@ -13,6 +16,8 @@ function start () {
       help: 'H'
     },
     default: {
+      // We could also assume that the default is 0. If so, UDP try to bind to
+      // a random port
       port: process.env.SWIM_PORT || 11000
     }
   })
@@ -34,37 +39,29 @@ function start () {
     return {host, port}
   })
   const opts = Object.assign({hosts, logger}, argv)
-
-  info(opts.hosts, 'HOSTS')
   const sdswim = new SDSwim(opts)
 
-  const charm = require('charm')(process.stdout)
-  charm.reset()
-  charm.position(0, 1).background('black').write(`HOST: ${sdswim.host || 'unknown'}` )
-  charm.position(0, 2).background('black').write(`PORT: ${sdswim.port || 'unknown'}` )
-  charm.position(0, 3).background('black').write('MEMBER LIST:')
-  charm.on('^C', process.exit)
+  // const charm = require('charm')(process.stdout)
+  // charm.reset()
+  // charm.on('^C', process.exit)
+  // updateInfo(charm)
 
   sdswim.on('join-sent', () => {
-    info('join sent to hosts')
+    info('join reques sent to nodes')
   })
 
-  function noop () {}
   // nothing on generic error
-  sdswim.on('error', noop);
+  sdswim.on('up', port => {
+    info({event: 'I am up', port})
+  })
 
-  // swim.on('peerUp', (peer) => {
-  //   info(peer, 'peer online')
-  // })
-  // swim.on('peerSuspect', (peer) => {
-  //   info(peer, 'peer suspect')
-  // })
-  // swim.on('peerDown', (peer) => {
-  //   info(peer, 'peer offline')
-  // })
-  // swim.on('up', (peer) => {
-  //   info({ id: baseswim.whoami() }, 'I am up')
-  // })
+  sdswim.on('joined', () => {
+    info({id: sdswim.whoami()}, 'Joined')
+  })
+
+  sdswim.on('error', err => {
+    error(err)
+  })
 
   sdswim.start()
 }
@@ -72,3 +69,21 @@ function start () {
 if (require.main === module) {
   start()
 }
+
+// function updateInfo(charm, info = {event: 'Starting', host: 'unknown', port:'unknown', memberList: []}) {
+//   if (info.event) {
+//     charm.position(0, 1).erase('line').write(`LAST EVENT: ${info.event}`)
+//   }
+//
+//   if (info.host) {
+//     charm.position(0, 2).erase('line').write(`HOST: ${info.host || 'unknown'}` )
+//   }
+//
+//   if (info.port) {
+//     charm.position(0, 3).erase('line').write(`PORT: ${info.port || 'unknown'}` )
+//   }
+//
+//   if (info.memberList) {
+//     charm.position(0, 4).erase('line').write(`MEMBER LIST: ${info.memberList}`)
+//   }
+// }

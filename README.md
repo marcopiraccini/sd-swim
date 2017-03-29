@@ -7,6 +7,8 @@ for message exchange
 Every Member `Mi` has a *membership list*.
 The `join` phase is used to connet to a group, getting this list and updating the other member's membership lists.
 
+[TODO: Complete decription of the changes]
+
 # Failure Detector
 
 Using two params:
@@ -31,3 +33,5 @@ The messages are:
 - Sync
 - Ack
 - Update
+
+[TODO]
