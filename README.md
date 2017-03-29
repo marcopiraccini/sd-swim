@@ -7,7 +7,7 @@ for message exchange
 Every Member `Mi` has a *membership list*.
 The `join` phase is used to connet to a group, getting this list and updating the other member's membership lists.
 
-[TODO: Complete decription of the changes]
+[TODO: Complete decription of the changes to basic SWIM]
 
 # Failure Detector
 
@@ -21,7 +21,9 @@ Given a node `Mi`, every `T`:
   - Answer not received after a timeout:
     - `Mi` selects a `k`members randomly and sends a `ping-req(Mj)` message
     - Every node of those, send in turn `ping(Mj)` and returns the answer to `Mi`
-- After `T`, Mi check if an `æck` from `mj` has been received, directly or through one of the `k` members. If not, marks `Mj` as failed and starts the update using the dissemintaion component.
+- After `T`, Mi check if an `ack` from `mj` has been received, directly or through one of the `k` members. If not, marks `Mj` as failed and starts the update using the dissemintaion component.
+
+[TODO: Complete decription of basic SWIM]
 
 # Protocol
 This implementation uses protobuf https://github.com/mafintosh/protocol-buffers
