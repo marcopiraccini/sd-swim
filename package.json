@@ -46,7 +46,8 @@
     "lab": "13.0.1",
     "lab-espower-transformer": "1.1.0",
     "nsp": "^2.6.3",
-    "power-assert": "^1.4.2"
+    "power-assert": "^1.4.2",
+    "proxyquire": "^1.7.11"
   },
   "config": {
     "ghooks": {
