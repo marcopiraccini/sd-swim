@@ -2,6 +2,54 @@
 Self- discovery version of SWIM membership protocol that uses Protocol Buffers over UDP
 for message exchange
 
+# Protocol
+This implementation uses protobuf https://github.com/mafintosh/protocol-buffers
+
+The messages are:
+- Join
+- UpdateJoin
+- Ping
+- PingReq
+- Sync
+- Ack
+- Update
+
+## Join
+
+This message is the first message used to join the group, and is sent to a set of members (targets) defined when the node is activated. In this example, the node **NODE_A** sends the message to **NODE_B**
+
+| Field         |      Value    |  Notes                     |
+|---------------|:-------------:|---------------------------:|
+| target.host   |  IP_B         |                            |
+| target.port   |  110000       |                            |
+| type          | 0             |                            |
+| token         | 8601b162-c329-4f78-bc69-bc41b2ebcfc1 |  uuidv4                    |
+
+
+On UUIDv4, see: https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_.28random.29
+
+## UpdateJoin
+
+This message is the response to Join. The token must be the same of the received Join message. When **Node_A** receive this message it:
+- Check the token
+- Saves it's own IP
+- Init the Memeber list with the one received from **Node_B**
+
+
+| Field         |      Value    |  Notes                     |
+|---------------|:-------------:|---------------------------:|
+| target.host   |  IP_A         |                            |
+| target.port   |  110000       |                            |
+| type          | 1             |                            |
+| token         | 8601b162-c329-4f78-bc69-bc41b2ebcfc1 |  uuidv4                    |
+| memberList    |   node[]      |                            |
+| node.host     |       IP_X    |                            |
+| node.port     |       110000  |                            |
+
+
+This message is the first message used to join the group, and is sent to a set of members (targets) defined when the node is activated.
+
+
 # Membership
 
 Every Member `Mi` has a *membership list*.
@@ -23,17 +71,4 @@ Given a node `Mi`, every `T`:
     - Every node of those, send in turn `ping(Mj)` and returns the answer to `Mi`
 - After `T`, Mi check if an `ack` from `mj` has been received, directly or through one of the `k` members. If not, marks `Mj` as failed and starts the update using the dissemintaion component.
 
-[TODO: Complete decription of basic SWIM]
-
-# Protocol
-This implementation uses protobuf https://github.com/mafintosh/protocol-buffers
-The messages are:
-- Join
-- UpdateJoin
-- Ping
-- PingReq
-- Sync
-- Ack
-- Update
-
-[TODO]
+[TODO: Complete description of basic SWIM]

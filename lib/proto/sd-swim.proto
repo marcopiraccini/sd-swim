@@ -11,9 +11,29 @@ enum MessageType {
   UPDATE = 6;
 }
 
+/**
+ * Node states
+ */
+enum NodeState {
+    Alive = 0;
+    Suspect = 1;
+    Faulty = 2;
+}
+
+message Node {
+  required string host = 1;
+  optional int32 port = 2;
+  optional NodeState state = 3 [default = 0];
+}
+
 message Target {
   required string host = 1;
   optional int32 port = 2;
+}
+
+message Entry {
+  required string key = 1;
+  required int32 value = 2;
 }
 
 /**
@@ -23,5 +43,6 @@ message Msg {
   optional Target target = 1;
   required MessageType type = 2;
   optional string token = 3;
-  optional string payload = 4;
+  repeated Node memberList = 4;
+  repeated Entry payload = 5;
 }
