@@ -11,6 +11,9 @@ describe('Messages', () => {
   const host1 = {host: 'host1', port: 1234}
   const host2 = {host: 'host2', port: 5678}
   const host3 = {host: 'host3', port: 9101}
+  const memberList = []
+  memberList.push({node: host1, status: 0, setBy: host3})
+  memberList.push({node: host2, status: 0, setBy: host3})
 
   const messages = new Messages()
 
@@ -30,13 +33,38 @@ describe('Messages', () => {
 
   it('should create an updateJoin message correctly', done => {
     const token = '8601b162-c329-4f78-bc69-bc41b2ebcfc1'
-    const memberList = []
-    memberList.push({node: host1, status: 0, setBy: host3})
-    memberList.push({node: host2, status: 0, setBy: host3})
-    const updateJoinMessage = messages.updateJoinMessages(host1, token, memberList)
+    const updateJoinMessage = messages.updateJoinMessage(host1, token, memberList)
     const message = messages.decodeMessage(updateJoinMessage)
+    assert.equal(message.type, 1)
     assert.deepEqual(message.target, host1)
     assert.equal(message.token, token)
+    assert.deepEqual(message.memberList, memberList)
+    done()
+  })
+
+  it('should create an Ping message correctly', done => {
+    const pingMessage = messages.pingMessage(host1, memberList)
+    const message = messages.decodeMessage(pingMessage)
+    assert.equal(message.type, 2)
+    assert.deepEqual(message.target, host1)
+    assert.deepEqual(message.memberList, memberList)
+    done()
+  })
+
+  it('should create an Ack message correctly', done => {
+    const pingMessage = messages.ackMessage(host1, memberList)
+    const message = messages.decodeMessage(pingMessage)
+    assert.equal(message.type, 3)
+    assert.deepEqual(message.target, host1)
+    assert.deepEqual(message.memberList, memberList)
+    done()
+  })
+
+  it('should create an PingReq message correctly', done => {
+    const pingMessage = messages.pingReqMessage(host1, memberList)
+    const message = messages.decodeMessage(pingMessage)
+    assert.equal(message.type, 4)
+    assert.deepEqual(message.target, host1)
     assert.deepEqual(message.memberList, memberList)
     done()
   })

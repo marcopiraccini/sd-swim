@@ -48,23 +48,30 @@ This message is the response to Join. The token must be the same of the received
 This message is the first message used to join the group, and is sent to a set of members (targets) defined when the node is activated.
 
 ## Ping
-
 This message is used in Failure Detection. Every `T` time, is sent to a random member od his member list
 (see the full description of the algorithm).
 
 | Field         |      Value    |  Notes                     |
 |---------------|:-------------:|---------------------------:|
 | type          | 2             |                            |
-| memberList    |   node[]      |                            |
-
+| memberList    |   member[]    |                            |
 
 ## Ack
-This message is used in Failure detection, and it's an aswer to a **Ping** or a **PingReq**
+This message is used in Failure detection, and it's an aswer to a **Ping** or a **PingReq*
 
 | Field         |      Value    |  Notes                     |
 |---------------|:-------------:|---------------------------:|
 | type          | 3             |                            |
-| memberList    |   node[]      |                            |
+| memberList    |   member[]    |                            |
+
+## PingReq
+This message is used to request an indirect IP a after a first ping failed.
+| Field         |      Value    |  Notes                     |
+|---------------|:-------------:|---------------------------:|
+| target.host   |  IP_A         | node to be checked indirectly |
+| target.port   |  110000       | node to be checked indirectly |
+| type          | 4             |                            |
+| memberList    |   member[]    |                            |
 
 
 # Membership
