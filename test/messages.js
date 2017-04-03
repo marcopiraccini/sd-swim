@@ -10,6 +10,7 @@ describe('Messages', () => {
 
   const host1 = {host: 'host1', port: 1234}
   const host2 = {host: 'host2', port: 5678}
+  const host3 = {host: 'host3', port: 9101}
 
   const messages = new Messages()
 
@@ -30,8 +31,8 @@ describe('Messages', () => {
   it('should create an updateJoin message correctly', done => {
     const token = '8601b162-c329-4f78-bc69-bc41b2ebcfc1'
     const memberList = []
-    memberList.push(Object.assign({}, host1, {state: 0}))
-    memberList.push(Object.assign({}, host2, {state: 0}))
+    memberList.push({node: host1, status: 0, setBy: host3})
+    memberList.push({node: host2, status: 0, setBy: host3})
     const updateJoinMessage = messages.updateJoinMessages(host1, token, memberList)
     const message = messages.decodeMessage(updateJoinMessage)
     assert.deepEqual(message.target, host1)

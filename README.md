@@ -9,10 +9,8 @@ The messages are:
 - Join
 - UpdateJoin
 - Ping
-- PingReq
-- Sync
 - Ack
-- Update
+- PingReq
 
 ## Join
 
@@ -48,6 +46,25 @@ This message is the response to Join. The token must be the same of the received
 
 
 This message is the first message used to join the group, and is sent to a set of members (targets) defined when the node is activated.
+
+## Ping
+
+This message is used in Failure Detection. Every `T` time, is sent to a random member od his member list
+(see the full description of the algorithm).
+
+| Field         |      Value    |  Notes                     |
+|---------------|:-------------:|---------------------------:|
+| type          | 2             |                            |
+| memberList    |   node[]      |                            |
+
+
+## Ack
+This message is used in Failure detection, and it's an aswer to a **Ping** or a **PingReq**
+
+| Field         |      Value    |  Notes                     |
+|---------------|:-------------:|---------------------------:|
+| type          | 3             |                            |
+| memberList    |   node[]      |                            |
 
 
 # Membership

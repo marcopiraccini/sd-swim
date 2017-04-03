@@ -5,10 +5,8 @@ enum MessageType {
   JOIN = 0;
   UPDATE_JOIN = 1;
   PING = 2;
-  PING_REQ = 3;
-  SYNC = 4;
-  ACK = 5;
-  UPDATE = 6;
+  ACK = 3;
+  PING_REQ = 4;
 }
 
 /**
@@ -23,7 +21,12 @@ enum NodeState {
 message Node {
   required string host = 1;
   optional int32 port = 2;
-  optional NodeState state = 3 [default = 0];
+}
+
+message Member {
+  required Node node = 1;
+  optional NodeState status = 2 [default = 0];
+  optional Node setBy = 3;
 }
 
 message Target {
@@ -32,17 +35,18 @@ message Target {
 }
 
 message Entry {
-  required string key = 1;
-  required int32 value = 2;
+  required Node owner = 1;
+  required string key = 2;
+  required string value = 3;
 }
 
 /**
  * SD-SWIM message
  */
 message Msg {
-  optional Target target = 1;
+  optional Node target = 1;
   required MessageType type = 2;
   optional string token = 3;
-  repeated Node memberList = 4;
-  repeated Entry payload = 5;
+  repeated Member memberList = 4;
+  repeated Entry payload = 5; // To propagate further generic metadata
 }
