@@ -39,11 +39,24 @@ describe('SD-Swim', () => {
   it('should start a sd-swim node using a callback', done => {
     const port = 12345
     const sdswim = new SDSwim({port})
-    sdswim.start((err, port) => {
+    sdswim.start(port => {
       const myself = sdswim.whoami()
       assert.strictEqual(myself.host, undefined)
       assert.strictEqual(myself.port, port)
       sdswim.stop(done)
+    })
+  })
+
+  it.skip('should failing starting on the same port', done => {
+    const port = 12345
+    const sdswim = new SDSwim({port})
+    sdswim.start((err, port) => {
+      assert.strictEqual(err, null)
+      const sdswim2 = new SDSwim({port})
+      sdswim2.start(err2 => {
+        assert.ok(err2)
+        sdswim.stop(done)
+      })
     })
   })
 })
