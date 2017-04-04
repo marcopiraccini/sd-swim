@@ -47,14 +47,16 @@ describe('SD-Swim', () => {
     })
   })
 
-  it.skip('should failing starting on the same port', done => {
+  it('should fail starting on the same port', done => {
     const port = 12345
     const sdswim = new SDSwim({port})
-    sdswim.start((err, port) => {
-      assert.strictEqual(err, null)
-      const sdswim2 = new SDSwim({port})
-      sdswim2.start(err2 => {
-        assert.ok(err2)
+    sdswim.start(port => {
+      const sdswim2 = new SDSwim({port}) // same port
+      sdswim2.start(() => {
+        throw new Error('should not call the cb')
+      })
+      sdswim2.on('error', err => {
+        assert.strictEqual(err.code, 'EADDRINUSE')
         sdswim.stop(done)
       })
     })
