@@ -5,18 +5,10 @@ const pino = require('pino')
 const Lab = require('lab')
 const lab = exports.lab = Lab.script()
 
-const {describe, it, before, beforeEach} = lab
+const {describe, it} = lab
 const SDSwim = require('../lib/sd-swim')
 
 describe('SD-Swim', () => {
-
-  before(done => {
-    done()
-  })
-
-  beforeEach(done => {
-    done()
-  })
 
   it('should start a sd-swim node using default port (11000)', done => {
     // start a single node, that should know only his port.
@@ -43,4 +35,5 @@ describe('SD-Swim', () => {
     })
     sdswim.start()
   })
+
 })
