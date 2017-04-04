@@ -31,8 +31,8 @@ function start () {
   const hosts = nodes.map(el => {
     const [host, portStr] = el.split(':')
     const port = Number(portStr)
-    if (!port || port <= 1 || port > 65535) {
-      console.error(`Port ${portStr} not correct, must be a number`)
+    if (!port || port < 0 || port > 65535) {
+      console.error(`Port ${portStr} not correct, must be a port valid number`)
       console.error(`Usage: ${process.argv[1]} [--port PORT] host1[:port1] host2[:port2]...`)
       process.exit(1)
     }
@@ -40,11 +40,6 @@ function start () {
   })
   const opts = Object.assign({hosts, logger}, argv)
   const sdswim = new SDSwim(opts)
-
-  // const charm = require('charm')(process.stdout)
-  // charm.reset()
-  // charm.on('^C', process.exit)
-  // updateInfo(charm)
 
   sdswim.on('join-sent', () => {
     info('join reques sent to nodes')
@@ -69,21 +64,3 @@ function start () {
 if (require.main === module) {
   start()
 }
-
-// function updateInfo(charm, info = {event: 'Starting', host: 'unknown', port:'unknown', memberList: []}) {
-//   if (info.event) {
-//     charm.position(0, 1).erase('line').write(`LAST EVENT: ${info.event}`)
-//   }
-//
-//   if (info.host) {
-//     charm.position(0, 2).erase('line').write(`HOST: ${info.host || 'unknown'}` )
-//   }
-//
-//   if (info.port) {
-//     charm.position(0, 3).erase('line').write(`PORT: ${info.port || 'unknown'}` )
-//   }
-//
-//   if (info.memberList) {
-//     charm.position(0, 4).erase('line').write(`MEMBER LIST: ${info.memberList}`)
-//   }
-// }
