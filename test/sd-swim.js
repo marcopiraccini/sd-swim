@@ -18,7 +18,7 @@ describe('SD-Swim', () => {
       const myself = sdswim.whoami()
       assert.strictEqual(myself.host, undefined)
       assert.strictEqual(myself.port, 11000)
-      done()
+      sdswim.stop(done)
     })
     sdswim.start()
   })
@@ -31,9 +31,19 @@ describe('SD-Swim', () => {
       const myself = sdswim.whoami()
       assert.strictEqual(myself.host, undefined)
       assert.strictEqual(myself.port, port)
-      done()
+      sdswim.stop(done)
     })
     sdswim.start()
   })
 
+  it('should start a sd-swim node using a callback', done => {
+    const port = 12345
+    const sdswim = new SDSwim({port})
+    sdswim.start((err, port) => {
+      const myself = sdswim.whoami()
+      assert.strictEqual(myself.host, undefined)
+      assert.strictEqual(myself.port, port)
+      sdswim.stop(done)
+    })
+  })
 })
