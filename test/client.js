@@ -43,7 +43,7 @@ describe('Protocol Client', () => {
     const host2 = {host: 'host2', port: 5678}
     const hosts = [host1, host2]
     const joinMessages = messages.joinMessages(hosts)
-    client.sendMessages(joinMessages, '127.0.0.1', 6666)
+    client.sendMessages(joinMessages)
     assert.equal(sentMessages.length, 2)
     const firstJoin = messages.decodeMessage(sentMessages[0].message)
     const secondJoin = messages.decodeMessage(sentMessages[1].message)

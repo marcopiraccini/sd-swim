@@ -20,8 +20,8 @@ describe('Messages', () => {
   it('should create a Join message correctly', done => {
     const joinMessages = messages.joinMessages([host1, host2])
     assert.equal(joinMessages.length, 2)
-    const message1 = messages.decodeMessage(joinMessages[0])
-    const message2 = messages.decodeMessage(joinMessages[1])
+    const message1 = messages.decodeMessage(joinMessages[0].data)
+    const message2 = messages.decodeMessage(joinMessages[1].data)
     assert.deepEqual(message1.target, host1)
     assert.ok(message1.token)
     assert.deepEqual(message1.memberList, [])
@@ -34,7 +34,7 @@ describe('Messages', () => {
   it('should create an UpdateJoin message correctly', done => {
     const token = '8601b162-c329-4f78-bc69-bc41b2ebcfc1'
     const updateJoinMessage = messages.updateJoinMessage(host1, token, memberList)
-    const message = messages.decodeMessage(updateJoinMessage)
+    const message = messages.decodeMessage(updateJoinMessage.data)
     assert.equal(message.type, 1)
     assert.deepEqual(message.target, host1)
     assert.equal(message.token, token)
@@ -44,7 +44,7 @@ describe('Messages', () => {
 
   it('should create a Ping message correctly', done => {
     const pingMessage = messages.pingMessage(host1, memberList)
-    const message = messages.decodeMessage(pingMessage)
+    const message = messages.decodeMessage(pingMessage.data)
     assert.equal(message.type, 2)
     assert.deepEqual(message.target, host1)
     assert.deepEqual(message.memberList, memberList)
@@ -53,7 +53,7 @@ describe('Messages', () => {
 
   it('should create an Ack message correctly', done => {
     const pingMessage = messages.ackMessage(host1, memberList)
-    const message = messages.decodeMessage(pingMessage)
+    const message = messages.decodeMessage(pingMessage.data)
     assert.equal(message.type, 3)
     assert.deepEqual(message.target, host1)
     assert.deepEqual(message.memberList, memberList)
@@ -62,7 +62,7 @@ describe('Messages', () => {
 
   it('should create a PingReq message correctly', done => {
     const pingMessage = messages.pingReqMessage(host1, memberList)
-    const message = messages.decodeMessage(pingMessage)
+    const message = messages.decodeMessage(pingMessage.data)
     assert.equal(message.type, 4)
     assert.deepEqual(message.target, host1)
     assert.deepEqual(message.memberList, memberList)
