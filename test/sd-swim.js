@@ -5,7 +5,7 @@ const pino = require('pino')
 const Lab = require('lab')
 const lab = exports.lab = Lab.script()
 
-const {describe, it} = lab
+const {describe, it, beforeEach, afterEach} = lab
 const SDSwim = require('../lib/sd-swim')
 
 describe('SD-Swim', () => {
@@ -18,6 +18,24 @@ describe('SD-Swim', () => {
       const myself = sdswim.whoami()
       assert.strictEqual(myself.host, undefined)
       assert.strictEqual(myself.port, 11000)
+      assert.strictEqual(myself.state, 'STARTED')
+      sdswim.stop(() => {
+        assert.strictEqual(sdswim.whoami().state, 'STOPPED')
+        done()
+      })
+    })
+    sdswim.start()
+  })
+
+  it('should start a sd-swim node using random port (0)', done => {
+    // start a single node, that should know only his port.
+    // Default port:
+    const sdswim = new SDSwim({logger: pino(), port: 0})
+    sdswim.on('up', port => {
+      const myself = sdswim.whoami()
+      assert.notEqual(port, 11000)
+      assert.strictEqual(myself.host, undefined)
+      assert.strictEqual(myself.port, port)
       assert.strictEqual(myself.state, 'STARTED')
       sdswim.stop(() => {
         assert.strictEqual(sdswim.whoami().state, 'STOPPED')
@@ -44,7 +62,10 @@ describe('SD-Swim', () => {
   it('should start a sd-swim node using a callback', done => {
     const port = 12345
     const sdswim = new SDSwim({port})
-    sdswim.start(port => {
+    sdswim.start((err, port) => {
+      if (err) {
+        return assert.fail(err)
+      }
       const myself = sdswim.whoami()
       assert.strictEqual(myself.host, undefined)
       assert.strictEqual(myself.port, port)
@@ -52,14 +73,12 @@ describe('SD-Swim', () => {
     })
   })
 
-  it('should fail starting on the same port', done => {
+  it('should fail starting on the same port, checking event', done => {
     const port = 12345
     const sdswim = new SDSwim({port})
-    sdswim.start(port => {
+    sdswim.start(() => {
       const sdswim2 = new SDSwim({port}) // same port
-      sdswim2.start(() => {
-        throw new Error('should not call the cb')
-      })
+      sdswim2.start()
       sdswim2.on('error', err => {
         assert.strictEqual(err.code, 'EADDRINUSE')
         assert.strictEqual(sdswim2.whoami().state, 'STOPPED')
@@ -68,10 +87,25 @@ describe('SD-Swim', () => {
     })
   })
 
+  it('should fail starting on the same port, using callbacks', done => {
+    const port = 12345
+    const sdswim = new SDSwim({port})
+    sdswim.start(() => {
+      const sdswim2 = new SDSwim({port}) // same port
+      sdswim2.start(err => {
+        assert.strictEqual(err.code, 'EADDRINUSE')
+        assert.strictEqual(sdswim2.whoami().state, 'STOPPED')
+        sdswim.stop(done)
+      })
+    })
+  })
+
+
   it('should fail start, stop and then start again correctly', done => {
     const port = 12345
     const sdswim = new SDSwim({port})
-    sdswim.start(port => {
+    sdswim.start((err, port) => {
+      assert.equal(err, null)
       const myself = sdswim.whoami()
       assert.strictEqual(myself.host, undefined)
       assert.strictEqual(myself.port, port)
@@ -88,5 +122,29 @@ describe('SD-Swim', () => {
       })
     })
   })
-  
+
+  describe('given a started node', () => {
+
+    let target
+    const targetPort = 12345
+
+    beforeEach(done => {
+      target = new SDSwim({port: targetPort})
+      target.start(done)
+    })
+
+    afterEach(done => {
+      target.stop(done)
+    })
+
+    it('should new node send a join message', done => {
+      const port = 12346
+      const hosts = [{host: '127.0.0.1', port: targetPort}]
+      const sdswim = new SDSwim({port, hosts})
+      sdswim.start(() => {
+        sdswim.stop(done)
+      })
+    })
+  })
+
 })

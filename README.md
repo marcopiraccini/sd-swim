@@ -2,6 +2,11 @@
 Self- discovery version of SWIM membership protocol that uses Protocol Buffers over UDP
 for message exchange
 
+# usage
+
+[TODO]
+
+
 # Protocol
 This implementation uses protobuf https://github.com/mafintosh/protocol-buffers
 
