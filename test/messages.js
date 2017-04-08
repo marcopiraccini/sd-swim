@@ -12,8 +12,8 @@ describe('Messages', () => {
   const host2 = {host: 'host2', port: 5678}
   const host3 = {host: 'host3', port: 9101}
   const memberList = []
-  memberList.push({node: host1, status: 0, setBy: host3})
-  memberList.push({node: host2, status: 0, setBy: host3})
+  memberList.push({node: host1, state: 0, setBy: host3})
+  memberList.push({node: host2, state: 0, setBy: host3})
 
   const messages = new Messages()
 

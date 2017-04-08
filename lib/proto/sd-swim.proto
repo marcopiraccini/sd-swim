@@ -25,7 +25,7 @@ message Node {
 
 message Member {
   required Node node = 1;
-  optional NodeState status = 2 [default = 0];
+  optional NodeState state = 2 [default = 0];
   optional Node setBy = 3;
 }
 

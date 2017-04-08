@@ -139,7 +139,7 @@ describe('SD-Swim', () => {
     })
 
     it('should new node send a join message and get a correct member list', done => {
-      const port = 12346
+      const port = 12340
       const hosts = [{host: '127.0.0.1', port: targetPort}]
       const sdswim = new SDSwim({port, hosts})
       sdswim.start((err) => {
@@ -148,12 +148,17 @@ describe('SD-Swim', () => {
       sdswim.on('updated-members', membersList => {
         const expectedList = [
           { node: { host: '127.0.0.1', port: 12345 },
-            status: 0,
+            state: 0,
             setBy: { host: '127.0.0.1', port: 12345 } },
-          { node: { host: '127.0.0.1', port: 12346 },
-            status: 0,
+          { node: { host: '127.0.0.1', port: 12340 },
+            state: 0,
             setBy: { host: '127.0.0.1', port: 12345 } } ]
         assert.deepEqual(membersList, expectedList)
+        assert.deepEqual(target.getMembers(), expectedList)
+        assert.deepEqual(sdswim.host, '127.0.0.1')
+        assert.deepEqual(sdswim.port, 12340)
+        assert.deepEqual(target.host, '127.0.0.1')
+        assert.deepEqual(target.port, 12345)
         sdswim.stop(done)
       })
     })
