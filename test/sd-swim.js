@@ -18,7 +18,11 @@ describe('SD-Swim', () => {
       const myself = sdswim.whoami()
       assert.strictEqual(myself.host, undefined)
       assert.strictEqual(myself.port, 11000)
-      sdswim.stop(done)
+      assert.strictEqual(myself.state, 'STARTED')
+      sdswim.stop(() => {
+        assert.strictEqual(sdswim.whoami().state, 'STOPPED')
+        done()
+      })
     })
     sdswim.start()
   })
@@ -31,6 +35,7 @@ describe('SD-Swim', () => {
       const myself = sdswim.whoami()
       assert.strictEqual(myself.host, undefined)
       assert.strictEqual(myself.port, port)
+      assert.strictEqual(sdswim.whoami().state, 'STARTED')
       sdswim.stop(done)
     })
     sdswim.start()
@@ -57,8 +62,31 @@ describe('SD-Swim', () => {
       })
       sdswim2.on('error', err => {
         assert.strictEqual(err.code, 'EADDRINUSE')
+        assert.strictEqual(sdswim2.whoami().state, 'STOPPED')
         sdswim.stop(done)
       })
     })
   })
+
+  it('should fail start, stop and then start again correctly', done => {
+    const port = 12345
+    const sdswim = new SDSwim({port})
+    sdswim.start(port => {
+      const myself = sdswim.whoami()
+      assert.strictEqual(myself.host, undefined)
+      assert.strictEqual(myself.port, port)
+      assert.strictEqual(myself.state, 'STARTED')
+      sdswim.stop(() => {
+        assert.strictEqual(sdswim.whoami().state, 'STOPPED')
+        sdswim.start(() => {
+          assert.strictEqual(sdswim.whoami().state, 'STARTED')
+          sdswim.stop(() => {
+            assert.strictEqual(sdswim.whoami().state, 'STOPPED')
+            done()
+          })
+        })
+      })
+    })
+  })
+  
 })
