@@ -21,6 +21,7 @@ describe('SD-Swim', () => {
       assert.strictEqual(myself.state, 'STARTED')
       sdswim.stop(() => {
         assert.strictEqual(sdswim.whoami().state, 'STOPPED')
+        assert.equal(sdswim.getMembers().length, 0)
         done()
       })
     })
@@ -129,7 +130,7 @@ describe('SD-Swim', () => {
     const targetPort = 12345
 
     beforeEach(done => {
-      target = new SDSwim({port: targetPort, logLevel: 'debug'})
+      target = new SDSwim({port: targetPort})
       target.start(done)
     })
 
@@ -137,15 +138,25 @@ describe('SD-Swim', () => {
       target.stop(done)
     })
 
-    it('should new node send a join message', done => {
+    it('should new node send a join message and get a correct member list', done => {
       const port = 12346
       const hosts = [{host: '127.0.0.1', port: targetPort}]
-      const sdswim = new SDSwim({port, hosts, logLevel: 'debug'})
+      const sdswim = new SDSwim({port, hosts})
       sdswim.start((err) => {
         assert.equal(err, null)
+      })
+      sdswim.on('updated-members', membersList => {
+        const expectedList = [
+          { node: { host: '127.0.0.1', port: 12345 },
+            status: 0,
+            setBy: { host: '127.0.0.1', port: 12345 } },
+          { node: { host: '127.0.0.1', port: 12346 },
+            status: 0,
+            setBy: { host: '127.0.0.1', port: 12345 } } ]
+        assert.deepEqual(membersList, expectedList)
         sdswim.stop(done)
       })
     })
-  })
 
+  })
 })
