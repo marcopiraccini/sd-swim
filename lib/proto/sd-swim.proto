@@ -19,7 +19,7 @@ enum NodeState {
 }
 
 message Node {
-  required string host = 1;
+  optional string host = 1;
   optional int32 port = 2;
 }
 
@@ -27,11 +27,6 @@ message Member {
   required Node node = 1;
   optional NodeState status = 2 [default = 0];
   optional Node setBy = 3;
-}
-
-message Target {
-  required string host = 1;
-  optional int32 port = 2;
 }
 
 message Entry {
@@ -44,9 +39,10 @@ message Entry {
  * SD-SWIM message
  */
 message Msg {
-  optional Node target = 1;
-  required MessageType type = 2;
-  optional string token = 3;
-  repeated Member memberList = 4;
-  repeated Entry payload = 5; // To propagate further generic metadata
+  optional Node sender = 1;
+  optional Node target = 2;
+  required MessageType type = 3;
+  optional string token = 4;
+  repeated Member memberList = 5;
+  repeated Entry payload = 6; // To propagate further generic metadata
 }

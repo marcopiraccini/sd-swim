@@ -18,13 +18,16 @@ describe('Messages', () => {
   const messages = new Messages()
 
   it('should create a Join message correctly', done => {
-    const joinMessages = messages.joinMessages([host1, host2])
+    const senderListenPort = 6666
+    const joinMessages = messages.joinMessages(senderListenPort, [host1, host2])
     assert.equal(joinMessages.length, 2)
     const message1 = messages.decodeMessage(joinMessages[0].data)
     const message2 = messages.decodeMessage(joinMessages[1].data)
+    assert.deepEqual(message1.sender.port, senderListenPort)
     assert.deepEqual(message1.target, host1)
     assert.ok(message1.token)
     assert.deepEqual(message1.memberList, [])
+    assert.deepEqual(message2.sender.port, senderListenPort)
     assert.deepEqual(message2.target, host2)
     assert.ok(message2.token)
     assert.deepEqual(message2.memberList, [])
