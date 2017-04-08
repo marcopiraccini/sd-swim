@@ -129,7 +129,7 @@ describe('SD-Swim', () => {
     const targetPort = 12345
 
     beforeEach(done => {
-      target = new SDSwim({port: targetPort})
+      target = new SDSwim({port: targetPort, logLevel: 'debug'})
       target.start(done)
     })
 
@@ -140,7 +140,7 @@ describe('SD-Swim', () => {
     it('should new node send a join message', done => {
       const port = 12346
       const hosts = [{host: '127.0.0.1', port: targetPort}]
-      const sdswim = new SDSwim({port, hosts})
+      const sdswim = new SDSwim({port, hosts, logLevel: 'debug'})
       sdswim.start((err) => {
         assert.equal(err, null)
         sdswim.stop(done)
