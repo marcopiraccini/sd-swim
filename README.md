@@ -1,6 +1,6 @@
 # sd-swim
-Self- discovery version of SWIM membership protocol that uses Protocol Buffers over UDP
-for message exchange
+Self- discovery minimal implementation of SWIM membership protocol that uses Protocol Buffers over UDP
+for message exchange.
 
 # usage
 
