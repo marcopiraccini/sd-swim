@@ -141,7 +141,8 @@ describe('SD-Swim', () => {
       const port = 12346
       const hosts = [{host: '127.0.0.1', port: targetPort}]
       const sdswim = new SDSwim({port, hosts})
-      sdswim.start(() => {
+      sdswim.start((err) => {
+        assert.equal(err, null)
         sdswim.stop(done)
       })
     })
