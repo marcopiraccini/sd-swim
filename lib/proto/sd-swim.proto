@@ -39,10 +39,9 @@ message Entry {
  * SD-SWIM message
  */
 message Msg {
-  optional Node sender = 1;
-  optional Node target = 2;
-  required MessageType type = 3;
-  optional string token = 4;
-  repeated Member memberList = 5;
-  repeated Entry payload = 6; // To propagate further generic metadata
+  optional Node target = 1;
+  required MessageType type = 2;
+  optional string token = 3;
+  repeated Member memberList = 4;
+  repeated Entry payload = 5; // To propagate further generic metadata
 }

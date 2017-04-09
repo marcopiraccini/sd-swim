@@ -23,7 +23,6 @@ This message is the first message used to join the group, and is sent to a set o
 
 | Field         |      Value    |  Notes                     |
 |---------------|:-------------:|---------------------------:|
-| sender.port   |  110001       |                            |
 | target.host   |  IP_B         |                            |
 | target.port   |  110000       |                            |
 | type          | 0             |                            |

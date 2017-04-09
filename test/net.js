@@ -39,22 +39,19 @@ describe('Protocol Client', () => {
   })
 
   it('should send a bunch of join messages', done => {
-    const senderListenPort = 6666
     const host1 = {host: 'host1', port: 1234}
     const host2 = {host: 'host2', port: 5678}
     const hosts = [host1, host2]
-    const joinMessages = messages.joinMessages(senderListenPort, hosts)
+    const joinMessages = messages.joinMessages(hosts)
     client.sendMessages(joinMessages)
     assert.equal(sentMessages.length, 2)
     const firstJoin = messages.decodeMessage(sentMessages[0].message)
     const secondJoin = messages.decodeMessage(sentMessages[1].message)
 
-    assert.deepEqual(firstJoin.sender.port, senderListenPort)
     assert.deepEqual(firstJoin.target, host1)
     assert.ok(firstJoin.token)
     assert.equal(firstJoin.type, 0)
 
-    assert.deepEqual(secondJoin.sender.port, senderListenPort)
     assert.deepEqual(secondJoin.target, host2)
     assert.ok(secondJoin.token)
     assert.equal(secondJoin.type, 0)
