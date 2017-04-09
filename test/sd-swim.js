@@ -21,7 +21,7 @@ describe('SD-Swim', () => {
       assert.strictEqual(myself.state, 'STARTED')
       sdswim.stop(() => {
         assert.strictEqual(sdswim.whoami().state, 'STOPPED')
-        assert.equal(sdswim.getMembers().length, 0)
+        assert.equal(sdswim.members.length, 0)
         done()
       })
     })
@@ -154,7 +154,7 @@ describe('SD-Swim', () => {
             state: 0,
             setBy: { host: '127.0.0.1', port: 12345 } } ]
         assert.deepEqual(membersList, expectedList)
-        assert.deepEqual(target.getMembers(), expectedList)
+        assert.deepEqual(target.members, expectedList)
         assert.deepEqual(sdswim.host, '127.0.0.1')
         assert.deepEqual(sdswim.port, 12340)
         assert.deepEqual(target.host, '127.0.0.1')

@@ -8,9 +8,9 @@ const proxyquire = require('proxyquire')
 const {describe, it, before, beforeEach} = lab
 const Messages = require('../lib/messages')
 
-describe('Protocol Client', () => {
+describe('Network Communication', () => {
 
-  let client
+  let net
   let sentMessages = []
   const opts = {}
   const messages = new Messages(opts)
@@ -26,10 +26,10 @@ describe('Protocol Client', () => {
     const mockedDgram = {
       createSocket: () => (mockedClient)
     }
-    const Client = proxyquire('../lib/client', {
+    const Net = proxyquire('../lib/net', {
       'dgram' : mockedDgram
     })
-    client = new Client({logger: pino()})
+    net = new Net({logger: pino()})
     done()
   })
 
@@ -43,7 +43,7 @@ describe('Protocol Client', () => {
     const host2 = {host: 'host2', port: 5678}
     const hosts = [host1, host2]
     const joinMessages = messages.joinMessages(hosts)
-    client.sendMessages(joinMessages)
+    net._sendMessages(joinMessages)
     assert.equal(sentMessages.length, 2)
     const firstJoin = messages.decodeMessage(sentMessages[0].message)
     const secondJoin = messages.decodeMessage(sentMessages[1].message)
