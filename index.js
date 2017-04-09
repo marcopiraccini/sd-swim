@@ -15,7 +15,8 @@ function start () {
     alias: {
       port: 'p',
       help: 'H',
-      verbose: 'v'
+      verbose: 'v',
+      joinTimeout: 'j' // join timeout
     },
     default: {
       // We could also assume that the default is 0. If so, UDP try to bind to
@@ -25,8 +26,9 @@ function start () {
     }
   })
 
+  const usage = `Usage: ${process.argv[1]} [-p PORT] [-jt 2000] -v host1[:port1] host2[:port2]...`
   if (argv.help) {
-    console.error('Usage:', process.argv[1], '[--port PORT] -v host1[:port1] host2[:port2]...')
+    console.error(usage)
     process.exit(1)
   }
 
@@ -36,7 +38,7 @@ function start () {
     const port = Number(portStr)
     if (!port || port < 0 || port > 65535) {
       console.error(`Port ${portStr} not correct, must be a port valid number`)
-      console.error(`Usage: ${process.argv[1]} [--port PORT] -v host1[:port1] host2[:port2]...`)
+      console.error(usage)
       process.exit(1)
     }
     return {host, port}
