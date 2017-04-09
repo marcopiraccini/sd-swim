@@ -6,6 +6,17 @@ for message exchange.
 
 [TODO]
 
+# Algorithm Parameters
+
+| Field                    |      Default    |  Notes                     |
+|--------------------------|:---------------:|---------------------------:|
+| port                     |  2000           |                            |
+| joinTimeout              |  110000         |                            |
+| interval                 |  [TODO]         |         [TODO]             |
+| disseminationFactor      |  [TODO]         |         [TODO]             |
+| pingTimeout              |  [TODO]         |         [TODO]             |
+| pingReqTimeout           |  [TODO]         |         [TODO]             |
+| pingReqGroupSize         |  [TODO]         |         [TODO]             |
 
 # Protocol
 This implementation uses protobuf https://github.com/mafintosh/protocol-buffers
@@ -24,7 +35,7 @@ This message is the first message used to join the group, and is sent to a set o
 | Field         |      Value    |  Notes                     |
 |---------------|:-------------:|---------------------------:|
 | target.host   |  IP_B         |                            |
-| target.port   |  110000       |                            |
+| target.port   |  11000        |                            |
 | type          | 0             |                            |
 | token         | 8601b162-c329-4f78-bc69-bc41b2ebcfc1 |  uuidv4                    |
 
@@ -42,7 +53,7 @@ This message is the response to Join. The token must be the same of the received
 | Field         |      Value    |  Notes                     |
 |---------------|:-------------:|---------------------------:|
 | target.host   |  IP_A         |                            |
-| target.port   |  110000       |                            |
+| target.port   |  11000        |                            |
 | type          | 1             |                            |
 | token         | 8601b162-c329-4f78-bc69-bc41b2ebcfc1 |  uuidv4                    |
 | memberList    |   node[]      |                            |
