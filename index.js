@@ -65,6 +65,7 @@ function start () {
 
   sdswim.on('error', err => {
     error(err)
+    process.exit(1)
   })
 
   sdswim.start()

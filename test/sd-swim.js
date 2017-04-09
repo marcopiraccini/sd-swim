@@ -163,5 +163,22 @@ describe('SD-Swim', () => {
       })
     })
 
+    it('should new node reach the join timeout when trying to join a non-existing node', done => {
+      const port = 12340
+      const hosts = [{host: '127.0.0.1', port: targetPort + 1}]
+      const sdswim = new SDSwim({port, hosts, joinTimeout: 1000})
+      sdswim.start((err) => {
+        assert.equal(err, null)
+      })
+      sdswim.on('updated-members', () => {
+        assert.fail("shoudn't receive an answer to join")
+        sdswim.stop(done)
+      })
+      sdswim.on('error', err => {
+        assert.ok(err.message.includes('Timeout triggered'))
+        sdswim.stop(done)
+      })
+    })
+
   })
 })
