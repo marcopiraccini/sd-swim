@@ -56,16 +56,15 @@ When B receives the Join message, it:
           "host": 10.10.10.11, // A_IP
           "port": 5678         // A_PORT
         },
-        "token":  "xxxyyyzz"
         "members": { (...)  }
 
     }
 ```
 A receives the UpdateJoin and save his own IP and init the member list.
 A will receive multiple updates (at maximum one for each Join sent).
-The first valid response is used by A to set his own IP.
-From the others, the member list is checked to update the member list as usual in SWIM implementation (see bleow)
-
+The first valid response is used by A to set his own IP and the initial member list.
+Subsequent UpdateJoin received are ignored, since the initial member list is
+already setup and the node knows is IP.
 
 [TODO: Complete decription of the changes to basic SWIM]
 
