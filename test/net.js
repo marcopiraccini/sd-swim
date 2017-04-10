@@ -49,11 +49,9 @@ describe('Network Communication', () => {
     const secondJoin = messages.decodeMessage(sentMessages[1].message)
 
     assert.deepEqual(firstJoin.target, host1)
-    assert.ok(firstJoin.token)
     assert.equal(firstJoin.type, 0)
 
     assert.deepEqual(secondJoin.target, host2)
-    assert.ok(secondJoin.token)
     assert.equal(secondJoin.type, 0)
 
     done()

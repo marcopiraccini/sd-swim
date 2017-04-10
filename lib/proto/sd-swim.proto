@@ -41,7 +41,7 @@ message Entry {
 message Msg {
   optional Node target = 1;
   required MessageType type = 2;
-  optional string token = 3;
-  repeated Member memberList = 4;
-  repeated Entry payload = 5; // To propagate further generic metadata
+//  optional string token = 3;
+  repeated Member members = 3;
+  repeated Entry payload = 4; // To propagate further generic metadata
 }
