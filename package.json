@@ -8,7 +8,8 @@
     "test": "lab test",
     "lint": "eslint .",
     "depcheck": "dependency-check package.json --unused --no-dev --entry test/*.js --entry index.js",
-    "nsp": "nsp check"
+    "nsp": "nsp check",
+    "prepush": "npm run nsp && npm run depcheck && npm test"
   },
   "repository": {
     "type": "git",
@@ -30,28 +31,22 @@
   "homepage": "https://github.com/marcopiraccini/sd-swim#readme",
   "dependencies": {
     "minimist": "^1.2.0",
-    "pino": "^4.2.2",
-    "protocol-buffers": "^3.2.1",
-    "uuid": "^3.0.1"
+    "pino": "^4.2.4",
+    "protocol-buffers": "^3.2.1"
   },
   "devDependencies": {
-    "dependency-check": "^2.5.1",
-    "eslint": "^3.18.0",
-    "eslint-config-standard": "^7.1.0",
+    "dependency-check": "^2.8.0",
+    "eslint": "^3.19.0",
+    "eslint-config-standard": "^10.2.0",
     "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-node": "^4.2.1",
+    "eslint-plugin-node": "^4.2.2",
     "eslint-plugin-promise": "^3.5.0",
-    "eslint-plugin-standard": "^2.1.1",
-    "ghooks": "2.0.0",
-    "lab": "13.0.1",
-    "lab-espower-transformer": "1.1.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "husky": "^0.13.3",
+    "lab": "^13.0.1",
+    "lab-espower-transformer": "^1.1.0",
     "nsp": "^2.6.3",
     "power-assert": "^1.4.2",
     "proxyquire": "^1.7.11"
-  },
-  "config": {
-    "ghooks": {
-      "pre-push": "npm run nsp && npm run depcheck && npm test"
-    }
   }
 }
