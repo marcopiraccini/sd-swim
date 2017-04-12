@@ -31,6 +31,7 @@
   "homepage": "https://github.com/marcopiraccini/sd-swim#readme",
   "dependencies": {
     "fifo": "^2.3.0",
+    "lodash": "^4.17.4",
     "minimist": "^1.2.0",
     "pino": "^4.2.4",
     "protocol-buffers": "^3.2.1"

@@ -7,6 +7,7 @@ const lab = exports.lab = Lab.script()
 
 const {describe, it, beforeEach, afterEach} = lab
 const SDSwim = require('../lib/sd-swim')
+const NodeStates = require('../lib/nodeStates')
 
 describe('SD-Swim', () => {
 
@@ -124,6 +125,7 @@ describe('SD-Swim', () => {
     })
   })
 
+
   describe('given a started node', () => {
 
     let target
@@ -178,6 +180,48 @@ describe('SD-Swim', () => {
         assert.ok(err.message.includes('Timeout triggered'))
         sdswim.stop(done)
       })
+    })
+
+  })
+
+  describe('given a started node with an empty member list', () => {
+
+    let target
+    const targetPort = 12345
+
+    beforeEach(done => {
+      target = new SDSwim({port: targetPort})
+      target.host = '1.1.1.0'
+      target.start(done)
+    })
+
+    afterEach(done => {
+      target.stop(done)
+    })
+
+    it('should update the member list correctly', done => {
+      const host1 = {host: '1.1.1.1', port: 1111}
+      const host2 = {host: '1.1.1.2', port: 1112}
+      const host3 = {host: '1.1.1.3', port: 1112}
+      const setBy = {host: target.host, port: target.port}
+
+      const expected1 = {node: host1, state: NodeStates.ALIVE, setBy}
+      const expected2 = {node: host2, state: NodeStates.ALIVE, setBy}
+      const expected3 = {node: host1, state: NodeStates.FAULTY, setBy}
+      const expected4 = {node: host1, state: NodeStates.SUSPECT, setBy: host3}
+
+      assert.deepEqual([], target.members)
+      target._updateMember(host1, NodeStates.ALIVE)
+      target._updateMember(host2, NodeStates.ALIVE)
+      assert.deepEqual([expected1, expected2], target.members)
+
+      target._updateMember(host1, NodeStates.FAULTY)
+      assert.deepEqual([expected3, expected2], target.members)
+
+      target._updateMember(host1, NodeStates.SUSPECT, host3) // set by a different host
+      assert.deepEqual([expected4, expected2], target.members)
+
+      done()
     })
 
   })
