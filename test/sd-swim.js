@@ -7,7 +7,6 @@ const lab = exports.lab = Lab.script()
 
 const {describe, it, beforeEach, afterEach} = lab
 const SDSwim = require('../lib/sd-swim')
-const NodeStates = require('../lib/nodeStates')
 
 describe('SD-Swim', () => {
 
@@ -182,6 +181,9 @@ describe('SD-Swim', () => {
       })
     })
 
+    it.skip('TODO - MISSING TEST: join more than one host')
+    it.skip('TODO - MISSING TEST: timout trigger when join successful')
+
   })
 
   describe('given a started node with an empty member list', () => {
@@ -205,20 +207,20 @@ describe('SD-Swim', () => {
       const host3 = {host: '1.1.1.3', port: 1112}
       const setBy = {host: target.host, port: target.port}
 
-      const expected1 = {node: host1, state: NodeStates.ALIVE, setBy}
-      const expected2 = {node: host2, state: NodeStates.ALIVE, setBy}
-      const expected3 = {node: host1, state: NodeStates.FAULTY, setBy}
-      const expected4 = {node: host1, state: NodeStates.SUSPECT, setBy: host3}
+      const expected1 = {node: host1, state: target.nodeStates.ALIVE, setBy}
+      const expected2 = {node: host2, state: target.nodeStates.ALIVE, setBy}
+      const expected3 = {node: host1, state: target.nodeStates.FAULTY, setBy}
+      const expected4 = {node: host1, state: target.nodeStates.SUSPECT, setBy: host3}
 
       assert.deepEqual([], target.members)
-      target._updateMember(host1, NodeStates.ALIVE)
-      target._updateMember(host2, NodeStates.ALIVE)
+      target._updateMember(host1, target.nodeStates.ALIVE)
+      target._updateMember(host2, target.nodeStates.ALIVE)
       assert.deepEqual([expected1, expected2], target.members)
 
-      target._updateMember(host1, NodeStates.FAULTY)
+      target._updateMember(host1, target.nodeStates.FAULTY)
       assert.deepEqual([expected3, expected2], target.members)
 
-      target._updateMember(host1, NodeStates.SUSPECT, host3) // set by a different host
+      target._updateMember(host1, target.nodeStates.SUSPECT, host3) // set by a different host
       assert.deepEqual([expected4, expected2], target.members)
 
       done()
