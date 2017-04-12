@@ -15,6 +15,17 @@ describe('Update', () => {
   it('should create an alive update correctly', done => {
     const update = new Update({})
     const expected = [{target: host1, setBy: host2, claim: NodeStates.ALIVE}]
+    update.addUpdate(host1, host2, NodeStates.ALIVE)
+    const updates = update.getUpdates()
+    assert.deepEqual(expected, updates)
+    const temp = update.getUpdates()
+    assert.deepEqual([], temp) // no more updates
+    done()
+  })
+
+  it('should create an alive update correctly passing the state', done => {
+    const update = new Update({})
+    const expected = [{target: host1, setBy: host2, claim: NodeStates.ALIVE}]
     update.addAliveUpdate(host1, host2)
     const updates = update.getUpdates()
     assert.deepEqual(expected, updates)
