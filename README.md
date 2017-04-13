@@ -8,6 +8,11 @@ used in protocol implementation.
 This can be a problem when running nodes in container-based architectures, where
 a containerized process cannot know the HOST IP automatically.
 
+## Notes
+Not yet implemented / supported:
+- Dissemination factor not supported yet. The `updatesMaxSize` params set the maximum number of updates sent using piggybacking
+- No control on message size yet
+
 # Usage
 
 [TODO]
@@ -19,10 +24,10 @@ a containerized process cannot know the HOST IP automatically.
 | port                     |  2000           |                            |
 | joinTimeout              |  110000         |                            |
 | interval                 |  [TODO]         |         [TODO]             |
-| disseminationFactor      |  [TODO]         |         [TODO]             |
 | pingTimeout              |  [TODO]         |         [TODO]             |
 | pingReqTimeout           |  [TODO]         |         [TODO]             |
 | pingReqGroupSize         |  [TODO]         |         [TODO]             |
+| updatesMaxSize           |  50             |         [TODO]             |
 
 
 # SD-SWIM Protocol
@@ -42,7 +47,7 @@ A Sends a Join message to B with {B_IP} (cannot sent his own IP because it doesn
         “target”: {
           "host": 10.10.10.10, // B_IP
           "port:" 12345        // B_PORT
-          }
+        }
     }
 ```
 
