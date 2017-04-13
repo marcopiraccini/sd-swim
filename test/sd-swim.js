@@ -160,6 +160,11 @@ describe('SD-Swim', () => {
         assert.deepEqual(sdswim.port, 12340)
         assert.deepEqual(target.host, '127.0.0.1')
         assert.deepEqual(target.port, 12345)
+
+        // must return the memebr list, excluding himself
+        const otherMembers = sdswim._getOtherMembers()
+        assert.deepEqual(otherMembers, [expectedList[0]])
+
         sdswim.stop(done)
       })
     })
