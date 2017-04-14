@@ -36,5 +36,5 @@ message Msg {
   optional Node target = 1;
   required MessageType type = 2;
   repeated Member members = 3; // The full list is sent only in join
-  repeated Member updates = 4; // To propagate further generic metadata
+  repeated Member updates = 4; // To piggiback the updates
 }

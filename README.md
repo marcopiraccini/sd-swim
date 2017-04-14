@@ -32,7 +32,7 @@ Not yet implemented / supported:
 
 # SD-SWIM Protocol
 
-SWIM is a membership protocol [TODO: Addreference],with the goal of having
+SWIM is a membership protocol [TODO: Add reference],with the goal of having
 each node of a distributed system an updated "member list".
 
 This implementation add a small join protocol used to join the group when there's
@@ -87,7 +87,7 @@ Given a node `Mi`, every `T`:
     - Every node of those, send in turn `ping(Mj)` and returns the answer to `Mi`
 - After `T`, Mi check if an `ack` from `mj` has been received, directly or through one of the `k` members. If not, marks `Mj` as failed and starts the update using the dissemintaion component.
 
-[TODO: Complete description of basic SWIM]
+[TODO: Complete description of basic SWIM + enanched SWIM]
 
 
 # Messages
@@ -125,9 +125,7 @@ This message is the response to Join. When **Node_A** receive this message it:
 | target.host   |  IP_A         |                            |
 | target.port   |  11000        |                            |
 | type          | 1             |                            |
-| memberList    |   node[]      |                            |
-| node.host     |       IP_X    |                            |
-| node.port     |       110000  |                            |
+| members       |   node[]      |                            |
 
 
 This message is the first message used to join the group, and is sent to a set of members (targets) defined when the node is activated.
@@ -139,7 +137,7 @@ This message is used in Failure Detection. Every `T` time, is sent to a random m
 | Field         |      Value    |  Notes                     |
 |---------------|:-------------:|---------------------------:|
 | type          | 2             |                            |
-| memberList    |   member[]    |                            |
+| updates       |   member[]    |  updates in piggybacking   |
 
 ## Ack
 This message is used in Failure detection, and it's an aswer to a **Ping** or a **PingReq*
@@ -147,7 +145,7 @@ This message is used in Failure detection, and it's an aswer to a **Ping** or a 
 | Field         |      Value    |  Notes                     |
 |---------------|:-------------:|---------------------------:|
 | type          | 3             |                            |
-| memberList    |   member[]    |                            |
+| updates       |   member[]    |  updates in piggybacking   |
 
 ## PingReq
 This message is used to request an indirect IP a after a first ping failed.
@@ -157,4 +155,4 @@ This message is used to request an indirect IP a after a first ping failed.
 | target.host   |  IP_A         | node to be checked indirectly |
 | target.port   |  110000       | node to be checked indirectly |
 | type          | 4             |                            |
-| memberList    |   member[]    |                            |
+| updates       |   member[]    |  updates in piggybacking   |
