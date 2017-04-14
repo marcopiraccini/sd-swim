@@ -45,7 +45,7 @@
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
     "husky": "^0.13.3",
-    "lab": "^13.0.1",
+    "lab": "^13.0.2",
     "lab-espower-transformer": "^1.1.0",
     "nsp": "^2.6.3",
     "power-assert": "^1.4.2",

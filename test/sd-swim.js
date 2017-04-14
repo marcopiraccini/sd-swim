@@ -163,6 +163,7 @@ describe('SD-Swim', () => {
 
         // must return the memebr list, excluding himself
         const otherMembers = sdswim._getOtherMembers()
+
         assert.deepEqual(otherMembers, [expectedList[0]])
 
         sdswim.stop(done)

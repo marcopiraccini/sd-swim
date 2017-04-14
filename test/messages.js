@@ -14,6 +14,7 @@ describe('Messages', () => {
   const members = []
   members.push({node: host1, state: 0, setBy: host3})
   members.push({node: host2, state: 0, setBy: host3})
+  const updates = members
 
   const messages = new Messages()
 
@@ -39,29 +40,29 @@ describe('Messages', () => {
   })
 
   it('should create a Ping message correctly', done => {
-    const pingMessage = messages.pingMessage(host1, members)
+    const pingMessage = messages.pingMessage(host1, updates)
     const message = messages.decodeMessage(pingMessage.data)
     assert.equal(message.type, 2)
     assert.deepEqual(message.target, host1)
-    assert.deepEqual(message.members, members)
+    assert.deepEqual(message.updates, updates)
     done()
   })
 
   it('should create an Ack message correctly', done => {
-    const pingMessage = messages.ackMessage(host1, members)
+    const pingMessage = messages.ackMessage(host1, updates)
     const message = messages.decodeMessage(pingMessage.data)
     assert.equal(message.type, 3)
     assert.deepEqual(message.target, host1)
-    assert.deepEqual(message.members, members)
+    assert.deepEqual(message.updates, updates)
     done()
   })
 
   it('should create a PingReq message correctly', done => {
-    const pingMessage = messages.pingReqMessage(host1, members)
+    const pingMessage = messages.pingReqMessage(host1, updates)
     const message = messages.decodeMessage(pingMessage.data)
     assert.equal(message.type, 4)
     assert.deepEqual(message.target, host1)
-    assert.deepEqual(message.members, members)
+    assert.deepEqual(message.updates, updates)
     done()
   })
 

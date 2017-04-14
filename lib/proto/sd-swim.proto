@@ -25,14 +25,8 @@ message Node {
 
 message Member {
   required Node node = 1;
-  optional NodeState state = 2 [default = 0];
-  optional Node setBy = 3;
-}
-
-message Entry {
-  required Node owner = 1;
-  required string key = 2;
-  required string value = 3;
+  optional Node setBy = 2;
+  optional NodeState state = 3 [default = 0];
 }
 
 /**
@@ -42,5 +36,5 @@ message Msg {
   optional Node target = 1;
   required MessageType type = 2;
   repeated Member members = 3; // The full list is sent only in join
-  repeated Entry payload = 4; // To propagate further generic metadata
+  repeated Member updates = 4; // To propagate further generic metadata
 }
