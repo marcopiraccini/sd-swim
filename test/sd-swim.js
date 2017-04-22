@@ -7,6 +7,7 @@ const lab = exports.lab = Lab.script()
 
 const {describe, it, beforeEach, afterEach} = lab
 const SDSwim = require('../lib/sd-swim')
+const {nodeStates: {ALIVE, SUSPECT, FAULTY}} = require('../lib/states')
 
 describe('SD-Swim', () => {
 
@@ -21,7 +22,7 @@ describe('SD-Swim', () => {
       assert.strictEqual(myself.state, 'STARTED')
       sdswim.stop(() => {
         assert.strictEqual(sdswim.whoami().state, 'STOPPED')
-        assert.equal(sdswim.members.length, 0)
+        assert.equal(sdswim.memberList.length, 0)
         done()
       })
     })
@@ -155,14 +156,14 @@ describe('SD-Swim', () => {
             state: 0,
             setBy: { host: '127.0.0.1', port: 12345 } } ]
         assert.deepEqual(membersList, expectedList)
-        assert.deepEqual(target.members, expectedList)
+        assert.deepEqual(target.memberList, expectedList)
         assert.deepEqual(sdswim.host, '127.0.0.1')
         assert.deepEqual(sdswim.port, 12340)
         assert.deepEqual(target.host, '127.0.0.1')
         assert.deepEqual(target.port, 12345)
 
         // must return the memebr list, excluding himself
-        const otherMembers = sdswim._getOtherMembers()
+        const otherMembers = sdswim.members.getOtherNonFaultyMembers()
 
         assert.deepEqual(otherMembers, [expectedList[0]])
 
@@ -213,21 +214,21 @@ describe('SD-Swim', () => {
       const host3 = {host: '1.1.1.3', port: 1112}
       const setBy = {host: target.host, port: target.port}
 
-      const expected1 = {node: host1, state: target.nodeStates.ALIVE, setBy}
-      const expected2 = {node: host2, state: target.nodeStates.ALIVE, setBy}
-      const expected3 = {node: host1, state: target.nodeStates.FAULTY, setBy}
-      const expected4 = {node: host1, state: target.nodeStates.SUSPECT, setBy: host3}
+      const expected1 = {node: host1, state: ALIVE, setBy}
+      const expected2 = {node: host2, state: ALIVE, setBy}
+      const expected3 = {node: host1, state: FAULTY, setBy}
+      const expected4 = {node: host1, state: SUSPECT, setBy: host3}
 
-      assert.deepEqual([], target.members)
-      target._updateMember(host1, target.nodeStates.ALIVE)
-      target._updateMember(host2, target.nodeStates.ALIVE)
-      assert.deepEqual([expected1, expected2], target.members)
+      assert.deepEqual([], target.memberList)
+      target.members.updateMember(host1, ALIVE)
+      target.members.updateMember(host2, ALIVE)
+      assert.deepEqual([expected1, expected2], target.memberList)
 
-      target._updateMember(host1, target.nodeStates.FAULTY)
-      assert.deepEqual([expected3, expected2], target.members)
+      target.members.updateMember(host1, FAULTY)
+      assert.deepEqual([expected3, expected2], target.memberList)
 
-      target._updateMember(host1, target.nodeStates.SUSPECT, host3) // set by a different host
-      assert.deepEqual([expected4, expected2], target.members)
+      target.members.updateMember(host1, SUSPECT, host3) // set by a different host
+      assert.deepEqual([expected4, expected2], target.memberList)
 
       done()
     })
