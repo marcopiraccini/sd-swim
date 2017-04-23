@@ -6,6 +6,7 @@ const lab = exports.lab = Lab.script()
 
 const {describe, it, beforeEach, afterEach} = lab
 const SDSwim = require('../lib/sd-swim')
+const {states: {JOINED}} = require('../lib/states')
 
 describe('Join', () => {
 
@@ -19,6 +20,20 @@ describe('Join', () => {
 
   afterEach(done => {
     target.stop(done)
+  })
+
+  it('should join and emit the "joined" event', done => {
+    const hosts = [{host: '127.0.0.1', port: target.port}]
+    // start a single node that join the target.
+    const sdswim = new SDSwim({port: 12340, hosts})
+    sdswim.on('joined', () => {
+      const myself = sdswim.whoami()
+      assert.strictEqual(myself.state, JOINED)
+      sdswim.stop(() => {
+        done()
+      })
+    })
+    sdswim.start()
   })
 
   it('should new node send a join message and get a correct member list', done => {

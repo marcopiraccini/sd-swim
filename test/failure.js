@@ -2,55 +2,57 @@
 
 const Lab = require('lab')
 const lab = exports.lab = Lab.script()
-
 const {describe, it, beforeEach, afterEach} = lab
-const {series} = require('async')
 const SDSwim = require('../lib/sd-swim')
+const {states: {JOINED}} = require('../lib/states')
+const pino = require('pino')
+const assert = require('power-assert')
+const {startNodes, stopNodes} = require('./common')
 
-const startNode = port => cb => {
-  const target = new SDSwim({port: port})
-  target.start(() => {
-    cb(null, target)
-  })
-}
-
-const stopNode = node => cb => {
-  node.stop(() => {
-    cb()
-  })
-}
 
 describe('Failure Detector', () => {
 
-  describe('given a set of nodes node with a starting member list', () => {
+  describe('given a started node', () =>  {
 
-    let target1, target2, target3
-    const targetPort1 = 12341
-    const targetPort2 = 12342
-    const targetPort3 = 12343
+    let target
+    const ports = [12340]
 
-    beforeEach(done => {
-      series([startNode(targetPort1),
-        startNode(targetPort2),
-        startNode(targetPort3)
-      ],
-      function(err, results) {
-        [target1, target2, target3] = results
+    beforeEach(done => startNodes(ports, function(err, results) {
+        [target] = results
         done()
       })
-    })
+    )
 
-    afterEach(done => {
-      series([
-        stopNode(target1),
-        stopNode(target2),
-        stopNode(target3)
-      ],done)
-    })
+    afterEach(done => stopNodes([target], done))
 
-    it('should send a ping message', done => {
-      // TODO
-      done()
+    it('should send a ping message to target after join', done => {
+
+      const hosts = [{host: '127.0.0.1', port: target.port}]
+
+      // start a single node that join the target.
+      const sdswim = new SDSwim({logger: pino(), port: 12341, hosts})
+      sdswim.on('joined', () => {
+        const myself = sdswim.whoami()
+        assert.strictEqual(myself.state, JOINED)
+        sdswim.stop(() => {
+          done()
+        })
+      })
+
+      // TODO: COMPLETE
+
+      // sdswim.on('ping', target => {
+      //   console.log("PING SENT TO ", target)
+      //   sdswim.stop(() => {
+      //     done()
+      //   })
+      // })
+
+      // sdswim.on('joined', () => {
+      //   console.log("JOINED!!!!!!", sdswim.memberlist)
+      // })
+
+      sdswim.start()
     })
 
   })
