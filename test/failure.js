@@ -4,28 +4,54 @@ const Lab = require('lab')
 const lab = exports.lab = Lab.script()
 
 const {describe, it, beforeEach, afterEach} = lab
+const {series} = require('async')
 const SDSwim = require('../lib/sd-swim')
+
+const startNode = port => cb => {
+  const target = new SDSwim({port: port})
+  target.start(() => {
+    cb(null, target)
+  })
+}
+
+const stopNode = node => cb => {
+  node.stop(() => {
+    cb()
+  })
+}
 
 describe('Failure Detector', () => {
 
-  describe('given a started node with an empty member list', () => {
+  describe('given a set of nodes node with a starting member list', () => {
 
-    let target
-    const targetPort = 12345
+    let target1, target2, target3
+    const targetPort1 = 12341
+    const targetPort2 = 12342
+    const targetPort3 = 12343
 
     beforeEach(done => {
-      target = new SDSwim({port: targetPort})
-      target.host = '1.1.1.0'
-      target.start(done)
+      series([startNode(targetPort1),
+        startNode(targetPort2),
+        startNode(targetPort3)
+      ],
+      function(err, results) {
+        [target1, target2, target3] = results
+        done()
+      })
     })
 
     afterEach(done => {
-      target.stop(done)
+      series([
+        stopNode(target1),
+        stopNode(target2),
+        stopNode(target3)
+      ],done)
     })
 
-    it('should update the member list correctly', done => {
+    it('should send a ping message', done => {
       // TODO
       done()
     })
 
-  })})
+  })
+})

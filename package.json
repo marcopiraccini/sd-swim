@@ -30,10 +30,12 @@
   },
   "homepage": "https://github.com/marcopiraccini/sd-swim#readme",
   "dependencies": {
+    "async": "^2.3.0",
     "fifo": "^2.3.0",
     "lodash": "^4.17.4",
     "minimist": "^1.2.0",
     "pino": "^4.2.4",
+    "propagate": "^1.0.0",
     "protocol-buffers": "^3.2.1"
   },
   "devDependencies": {
