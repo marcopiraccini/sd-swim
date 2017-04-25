@@ -10,8 +10,9 @@ a containerized process cannot know the HOST IP automatically.
 
 ## Notes
 Not yet implemented / supported:
-- Dissemination factor not supported yet. The `updatesMaxSize` params set the maximum number of updates sent using piggybacking
-- No control on message size yet
+- No control on message size (yet)
+- Choose the failure detection target using round-robin + random reordering on completing the taversal
+- Updates are sent using a FIFO queue.
 
 # Usage
 
@@ -28,18 +29,19 @@ Not yet implemented / supported:
 | pingReqTimeout           |  [TODO]         |         [TODO]             |
 | pingReqGroupSize         |  [TODO]         |         [TODO]             |
 | updatesMaxSize           |  50             |         [TODO]             |
+| suspectTimeout           |  100            |         [TODO]             |
 
 
 # SD-SWIM Protocol
 
-SWIM is a membership protocol [TODO: Add reference],with the goal of having
+SWIM is a membership protocol [https://www.cs.cornell.edu/~asdas/research/dsn02-swim.pdf],with the goal of having
 each node of a distributed system an updated "member list".
 
 This implementation add a small join protocol used to join the group when there's
-no knowledge of the own address.
+no knowledge of his own address.
 
 ## Join Protocol
-The `join` phase is used to connet to a group, getting this list and updating the other member's membership lists.
+The `join` phase is used to connect to a group, getting this list and updating the other member's membership lists.
 A Sends a Join message to B with {B_IP} (cannot sent his own IP because it doesn't know it), e.g.:
 
 ```
@@ -71,7 +73,53 @@ The first valid response is used by A to set his own IP and the initial member l
 Subsequent UpdateJoin received are ignored, since the initial member list is
 already setup and the node knows is IP.
 
-[TODO: Complete decription of the changes to basic SWIM]
+
+# Dissemination
+The dissemination of updates is done through piggybacking of `ping`, `ping-req` and `ack` messages.
+Every node maintains a list of updates to be propagated, and when it sends one of the above messages, add these changes
+to the payload. When a message is received, the updates payload is processed and changes are applied to the member list.
+
+Every update entry has the form:
+```
+{
+  target: {host: `10.10.10.10`, port: 12345},
+  setBy: {host: `11.11.11.11`, port: 12345},
+  claim: 0,
+  incNumber: 2
+}
+```
+
+The `claim` properties is the assertion on the node state, that can be:
+- `ALIVE`: 0
+- `SUSPECT`: 1
+- `FAULTY: 2`
+
+`incNumber` (incarnation number) is set initially to 0, and can be incremented
+only when a node receives an update message on himself.
+
+### Update rules
+
+A node is put in a `SUSPECT` state by the failure detector (see below) and then
+set to `FAILED` after `suspectTimeout`.
+These rules are applied when an update is processed:
+
+
+`ALIVE` update is received:
+  - If the node is in the member list as `SUSPECTED` and incNumber > is updated to `ALIVE` and the update is propagated, otherwise is dropped
+  - If not present in the member list, is simply added as `ALIVE` and the update is propagated
+  - If present and `ALIVE` and incNumber is >, the member is udated and the update is propagated, otherwise is dropped
+
+`SUSPECT` update is received:
+  - If the update is about the node himself, an `ALIVE` update is sent, the `SUSPECTED` update is dropped, and a new `ALIVE` update is created
+  - If the node is in the member list as `ALIVE`, if incNumber of the update is >=, then is updated as `SUSPECTED` and the update is propagated, otherwise is dropped
+  - If the node is in the member list as `SUSPECT`, if incNumber of the update is >, then is updated  and the update is propagated, otherwise is dropped
+
+`FAULTY` update is received:
+  - If the update is about the node himself, the`FAULTY` update is dropped and a new `ALIVE` message is created.
+  - If the node is in the member list, and incNumber >=,  it's simply removed from the alive nodes and the update is propagated,
+  otherwise (incNumber <) is dropped.
+
+When An `ALIVE` update is created, if the udpate is about the node himself, `incNumber` is incremented.
 
 # Failure Detector
 
@@ -85,7 +133,8 @@ Given a node `Mi`, every `T`:
   - Answer not received after a timeout:
     - `Mi` selects a `k`members randomly and sends a `ping-req(Mj)` message
     - Every node of those, send in turn `ping(Mj)` and returns the answer to `Mi`
-- After `T`, Mi check if an `ack` from `mj` has been received, directly or through one of the `k` members. If not, marks `Mj` as failed and starts the update using the dissemintaion component.
+- After `T`, Mi check if an `ack` from `mj` has been received, directly or through one of the `k` members. If not, marks `Mj` as failed and start
+disseminating the update
 
 [TODO: Complete description of basic SWIM + enanched SWIM]
 

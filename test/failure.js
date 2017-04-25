@@ -34,23 +34,21 @@ describe('Failure Detector', () => {
       sdswim.on('joined', () => {
         const myself = sdswim.whoami()
         assert.strictEqual(myself.state, JOINED)
-        sdswim.stop(() => {
-          done()
-        })
       })
 
-      // TODO: COMPLETE
+      sdswim.on('ping', target => {
+         assert.strictEqual(target.node.port, ports[0])
+         sdswim.stop(() => {
+           done()
+         })
+      })
 
-      // sdswim.on('ping', target => {
-      //   console.log("PING SENT TO ", target)
-      //   sdswim.stop(() => {
-      //     done()
-      //   })
-      // })
-
-      // sdswim.on('joined', () => {
-      //   console.log("JOINED!!!!!!", sdswim.memberlist)
-      // })
+      sdswim.on('ack', target => {
+         assert.strictEqual(target.node.port, ports[0])
+         sdswim.stop(() => {
+           done()
+         })
+      })
 
       sdswim.start()
     })
