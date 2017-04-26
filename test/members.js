@@ -6,7 +6,7 @@ const SDSwim = require('../lib/sd-swim')
 const Members = require('../lib/members')
 const {nodeStates: {ALIVE, SUSPECT, FAULTY}} = require('../lib/states')
 
-describe('given a started node with an empty member list', () => {
+describe('Members', () => {
 
   let node
   const nodePort = 12345
@@ -29,10 +29,10 @@ describe('given a started node with an empty member list', () => {
     const host3 = {host: '1.1.1.3', port: 1112}
     const setBy = {host: node.host, port: node.port}
 
-    const expected1 = {node: host1, state: ALIVE, setBy}
-    const expected2 = {node: host2, state: ALIVE, setBy}
-    const expected3 = {node: host1, state: FAULTY, setBy}
-    const expected4 = {node: host1, state: SUSPECT, setBy: host3}
+    const expected1 = {node: host1, state: ALIVE, setBy, incNumber: 0}
+    const expected2 = {node: host2, state: ALIVE, setBy, incNumber: 0}
+    const expected3 = {node: host1, state: FAULTY, setBy, incNumber: 0}
+    const expected4 = {node: host1, state: SUSPECT, setBy: host3, incNumber: 0}
 
     assert.deepEqual([], members.list)
     members.updateMember(host1, ALIVE)

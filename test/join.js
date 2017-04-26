@@ -47,10 +47,13 @@ describe('Join', () => {
       const expectedList = [
         { node: { host: '127.0.0.1', port: 12345 },
           state: 0,
-          setBy: { host: '127.0.0.1', port: 12345 } },
+          setBy: { host: '127.0.0.1', port: 12345 },
+          incNumber: 0},
         { node: { host: '127.0.0.1', port: 12340 },
           state: 0,
-          setBy: { host: '127.0.0.1', port: 12345 } } ]
+          setBy: { host: '127.0.0.1', port: 12345 },
+          incNumber: 0} ]
+
       assert.deepEqual(membersList, expectedList)
       assert.deepEqual(target.memberList, expectedList)
       assert.deepEqual(sdswim.host, '127.0.0.1')

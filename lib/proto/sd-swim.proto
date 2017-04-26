@@ -27,6 +27,7 @@ message Member {
   required Node node = 1;
   optional Node setBy = 2;
   optional NodeState state = 3 [default = 0];
+  optional int32 incNumber = 4 [default = 0];
 }
 
 /**

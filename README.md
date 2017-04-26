@@ -10,9 +10,9 @@ a containerized process cannot know the HOST IP automatically.
 
 ## Notes
 Not yet implemented / supported:
-- No control on message size (yet)
-- Choose the failure detection target using round-robin + random reordering on completing the taversal
-- Updates are sent using a FIFO queue.
+- No control on message size
+- Random failure detection (instead using round-robin + random reordering on completing the taversal)
+- Updates are sent using a FIFO queue (instead of preferring element gossiped fewer times)
 
 # Usage
 
@@ -21,15 +21,15 @@ Not yet implemented / supported:
 # Algorithm Parameters
 
 | Field                    |      Default    |  Notes                     |
-|--------------------------|:---------------:|---------------------------:|
-| port                     |  2000           |                            |
-| joinTimeout              |  110000         |                            |
-| interval                 |  [TODO]         |         [TODO]             |
-| pingTimeout              |  [TODO]         |         [TODO]             |
-| pingReqTimeout           |  [TODO]         |         [TODO]             |
-| pingReqGroupSize         |  [TODO]         |         [TODO]             |
-| updatesMaxSize           |  50             |         [TODO]             |
-| suspectTimeout           |  100            |         [TODO]             |
+|--------------------------|:---------------:|------------------------------------------------------------------------------------:|
+| port                     |  2000           |   Mandatory, but can be 0 (in this case it's the first random free port)            |
+| joinTimeout              |  110000         |   After this timeout, if the join protocol is not completed, an error is generated  |
+| interval                 |  [TODO]         |   Interval for failure detection              |
+| pingTimeout              |  [TODO]         |   Ping Timeout                                |
+| pingReqTimeout           |  [TODO]         |   Ping Request Timeout                        |
+| pingReqGroupSize         |  [TODO]         |   Ping Request Group Size                     |
+| updatesMaxSize           |  50             |   Maximun number of updates sent in piggybacking             |
+| suspectTimeout           |  100            |   Timeout to mark a `SUSPSECT` node as `FAULTY`              |
 
 
 # SD-SWIM Protocol
@@ -37,8 +37,7 @@ Not yet implemented / supported:
 SWIM is a membership protocol [https://www.cs.cornell.edu/~asdas/research/dsn02-swim.pdf],with the goal of having
 each node of a distributed system an updated "member list".
 
-This implementation add a small join protocol used to join the group when there's
-no knowledge of his own address.
+This implementation add a small join protocol used to join the group when a node has no a priori knowledge of his own address.
 
 ## Join Protocol
 The `join` phase is used to connect to a group, getting this list and updating the other member's membership lists.
@@ -69,10 +68,26 @@ When B receives the Join message, it:
 ```
 A receives the UpdateJoin and save his own IP and init the member list.
 A will receive multiple updates (at maximum one for each Join sent).
-The first valid response is used by A to set his own IP and the initial member list.
+The first valid response is used by A to set his own IP and the (full) initial member list.
+(sending the full memebre list from another node is the quicker way to start gossiping with other nodes).
 Subsequent UpdateJoin received are ignored, since the initial member list is
-already setup and the node knows is IP.
+already set and the node knows is IP.
 
+
+# Failure Detector
+
+Using two params:
+- `T`: Protocol Period
+- `k`: Failure detector subgroups
+
+Given a node `Mi`, every `T`:
+- It selects a random member from the list `Mj` and sends him a `ping`
+- `Mi` waits for the answer.
+  - Answer not received after a timeout:
+    - `Mi` selects a `k`members randomly and sends a `ping-req(Mj)` message
+    - Every node of those, send in turn `ping(Mj)` and returns the answer to `Mi`
+- After `T`, Mi check if an `ack` from `mj` has been received, directly or through one of the `k` members. If not, marks `Mj` as failed and start
+disseminating the update (see below)
 
 # Dissemination
 The dissemination of updates is done through piggybacking of `ping`, `ping-req` and `ack` messages.
@@ -95,54 +110,60 @@ The `claim` properties is the assertion on the node state, that can be:
 - `FAULTY: 2`
 
 `incNumber` (incarnation number) is set initially to 0, and can be incremented
-only when a node receives an update message on himself.
+only when a node receives an update message on himself. It's used to drop (and not further propagate)
+"outdated" updates
 
 ### Update rules
-
-A node is put in a `SUSPECT` state by the failure detector (see below) and then
-set to `FAILED` after `suspectTimeout`.
 These rules are applied when an update is processed:
 
+`ALIVE`, with `incNumber` = i
 
-`ALIVE` update is received:
-  - If the node is in the member list as `SUSPECTED` and incNumber > is updated to `ALIVE` and the update is propagated, otherwise is dropped
-  - If not present in the member list, is simply added as `ALIVE` and the update is propagated
-  - If present and `ALIVE` and incNumber is >, the member is udated and the update is propagated, otherwise is dropped
+| Condition                                           |      Member List                    |  Updates                   |
+|-----------------------------------------------------|:-----------------------------------:|---------------------------:|
+| Node not present                                    |   Member added as `ALIVE`           |     Propagated             |
+| Node present and `ALIVE`, with incNumber < i        |   Member updated (setBy, incNumber) |     Propagated             |
+| Node present and `ALIVE`, with incNumber >= i       |                                     ||
+| Node present and `SUSPECTED`, with incNumber <= i   |   Member updated as `ALIVE`         |     Propagated             |
+| Node present and `SUSPECTED`, with incNumber >  i   |                                     ||
 
-`SUSPECT` update is received:
-  - If the update is about the node himself, an `ALIVE` update is sent, the `SUSPECTED` update is dropped, and a new `ALIVE` update is created
-  - If the node is in the member list as `ALIVE`, if incNumber of the update is >=, then is updated as `SUSPECTED` and the update is propagated, otherwise is dropped
-  - If the node is in the member list as `SUSPECT`, if incNumber of the update is >, then is updated  and the update is propagated, otherwise is dropped
+`SUSPECT`, with `incNumber` = i
 
-`FAULTY` update is received:
-  - If the update is about the node himself, the`FAULTY` update is dropped and a new `ALIVE` message is created.
-  - If the node is in the member list, and incNumber >=,  it's simply removed from the alive nodes and the update is propagated,
-  otherwise (incNumber <) is dropped.
+| Condition                                             |      Member List                    |  Updates                   |
+|-------------------------------------------------------|:-----------------------------------:|---------------------------:|
+| Node not present                                      |   Member added as `SUSPECT`         |     Propagated                   |
+| Node is me                                            |   incNumber is incremented          |     new `ALIVE` update created   |
+| Member present and `ALIVE`, with incNumber < i        |   Member changed to `SUSPECT`       |     Propagated                   |
+| Member present and `ALIVE`, with incNumber >= i       |                                     ||
+| Member present and `SUSPECTED`, with incNumber <=  i  |   Member updated (setBy, incNumber) |     Propagated                   |
+| Member present and `SUSPECTED`, with incNumber >  i   |                                     ||
 
-When An `ALIVE` update is created, if the udpate is about the node himself, `incNumber` is incremented.
 
-# Failure Detector
+`FAULTY`, with `incNumber` = i
 
-Using two params:
-- `T`: Protocol Period
-- `k`: Failure detector subgroups
+| Condition                                           |      Member List                    |  Updates                   |
+|-----------------------------------------------------|:-----------------------------------:|---------------------------:|
+| Node not present                                    |                                     ||
+| Node is me                                          |   incNumber is incremented          |     new `ALIVE` update created        |
+| Node present and `ALIVE`, with incNumber < i        |   remove from the alive nodes       |     Propagated                        |
+| Node present and `ALIVE`, with incNumber >= i       |                                     ||
 
-Given a node `Mi`, every `T`:
-- it selects a random member from the list `Mj` and sends him a `ping`
-- `Mi` waits for the answer.
-  - Answer not received after a timeout:
-    - `Mi` selects a `k`members randomly and sends a `ping-req(Mj)` message
-    - Every node of those, send in turn `ping(Mj)` and returns the answer to `Mi`
-- After `T`, Mi check if an `ack` from `mj` has been received, directly or through one of the `k` members. If not, marks `Mj` as failed and start
-disseminating the update
+`pingReqTimeout` reached with no acks by Failure Detector:
 
-[TODO: Complete description of basic SWIM + enanched SWIM]
+| Condition                                           |      Member List Updates            |  Updates Propagations      |
+|-----------------------------------------------------|:-----------------------------------:|---------------------------:|
+| `pingReqTimeout` reached with no acks               |   change status to `SUSPECT`        |     new `SUSPECT` created  |
+
+`suspectTimeout` reached by Dissemination module
+
+| Condition                                           |      Member List Updates            |  Updates Propagations      |
+|-----------------------------------------------------|:-----------------------------------:|---------------------------:|
+| `suspectTimeout` reached for a node                 |   remove from alive nodes           |     new `FAULTY` created   |
 
 
 # Messages
 This implementation uses protobuf https://github.com/mafintosh/protocol-buffers
 
-The messages are:
+The messages generated are:
 - Join
 - UpdateJoin
 - Ping
@@ -159,8 +180,6 @@ This message is the first message used to join the group, and is sent to a set o
 | target.port   |  11000        |                            |
 | type          | 0             |                            |
 
-
-On UUIDv4, see: https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_.28random.29
 
 ## UpdateJoin
 
