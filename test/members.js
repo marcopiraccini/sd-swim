@@ -3,7 +3,6 @@ const Lab = require('lab')
 const lab = exports.lab = Lab.script()
 const {describe, it, beforeEach, afterEach} = lab
 const SDSwim = require('../lib/sd-swim')
-const Members = require('../lib/members')
 const {nodeStates: {ALIVE, SUSPECT, FAULTY}} = require('../lib/states')
 
 describe('Members', () => {
@@ -22,7 +21,7 @@ describe('Members', () => {
   })
 
   it('should update the member list correctly', done => {
-    const members = new Members({sdswim: node})
+    const members = node.members
 
     const host1 = {host: '1.1.1.1', port: 1111}
     const host2 = {host: '1.1.1.2', port: 1112}

@@ -25,7 +25,7 @@ describe('Update', () => {
 
   it('should create an alive update correctly', done => {
     const update = new Update({sdswim: node})
-    const expected = [{target: host1, setBy: host2, claim: ALIVE}]
+    const expected = [{node: host1, setBy: host2, state: ALIVE}]
     update.addUpdate(host1, host2, ALIVE)
     const updates = update.getUpdates()
     assert.deepEqual(expected, updates)
@@ -36,7 +36,7 @@ describe('Update', () => {
 
   it('should create an alive update correctly passing the state', done => {
     const update = new Update({sdswim: node})
-    const expected = [{target: host1, setBy: host2, claim: ALIVE}]
+    const expected = [{node: host1, setBy: host2, state: ALIVE}]
     update.addAliveUpdate(host1, host2)
     const updates = update.getUpdates()
     assert.deepEqual(expected, updates)
@@ -47,7 +47,7 @@ describe('Update', () => {
 
   it('should create a faulty update correctly', done => {
     const update = new Update({sdswim: node})
-    const expected = [{target: host1, setBy: host2, claim: FAULTY}]
+    const expected = [{node: host1, setBy: host2, state: FAULTY}]
     update.addFaultyUpdate(host1, host2)
     const updates = update.getUpdates()
     assert.deepEqual(expected, updates)
@@ -57,7 +57,7 @@ describe('Update', () => {
 
   it('should create a suspect update correctly', done => {
     const update = new Update({sdswim: node})
-    const expected = [{target: host1, setBy: host2, claim: SUSPECT}]
+    const expected = [{node: host1, setBy: host2, state: SUSPECT}]
     update.addSuspectUpdate(host1, host2)
     const updates = update.getUpdates()
     assert.deepEqual(expected, updates)
@@ -68,10 +68,10 @@ describe('Update', () => {
   it('should create a list of updates <= updatesMaxSize', done => {
     const update = new Update({sdswim: node})
     const expected = [
-      {target: host1, setBy: host2, claim: SUSPECT},
-      {target: host1, setBy: host2, claim: FAULTY},
-      {target: host1, setBy: host2, claim: ALIVE},
-      {target: host1, setBy: host2, claim: ALIVE}
+      {node: host1, setBy: host2, state: SUSPECT},
+      {node: host1, setBy: host2, state: FAULTY},
+      {node: host1, setBy: host2, state: ALIVE},
+      {node: host1, setBy: host2, state: ALIVE}
     ]
     update.addSuspectUpdate(host1, host2)
     update.addFaultyUpdate(host1, host2)
@@ -84,15 +84,14 @@ describe('Update', () => {
   })
 
   it('should create a list of updates > updatesMaxSize and return it correctly', done => {
-    node.updatesMaxSize = 3
-    const update = new Update({sdswim: node})
+    const update = new Update({updatesMaxSize: 3})
     const expected = [
-      {target: host1, setBy: host2, claim: SUSPECT},
-      {target: host1, setBy: host2, claim: FAULTY},
-      {target: host1, setBy: host2, claim: ALIVE}
+      {node: host1, setBy: host2, state: SUSPECT},
+      {node: host1, setBy: host2, state: FAULTY},
+      {node: host1, setBy: host2, state: ALIVE}
     ]
     const moreExpected = [
-      {target: host1, setBy: host2, claim: ALIVE}
+      {node: host1, setBy: host2, state: ALIVE}
     ]
     update.addSuspectUpdate(host1, host2)
     update.addFaultyUpdate(host1, host2)

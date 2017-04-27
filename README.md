@@ -99,12 +99,12 @@ Every update entry has the form:
 {
   target: {host: `10.10.10.10`, port: 12345},
   setBy: {host: `11.11.11.11`, port: 12345},
-  claim: 0,
+  state: 0,
   incNumber: 2
 }
 ```
 
-The `claim` properties is the assertion on the node state, that can be:
+The `state` properties is the assertion on the node state, that can be:
 - `ALIVE`: 0
 - `SUSPECT`: 1
 - `FAULTY: 2`
