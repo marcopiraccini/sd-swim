@@ -34,8 +34,9 @@ message Member {
  * SD-SWIM message
  */
 message Msg {
-  optional Node target = 1;
+  optional Node destination = 1;
   required MessageType type = 2;
   repeated Member members = 3; // The full list is sent only in join
   repeated Member updates = 4; // To piggiback the updates
+  optional Node target = 5;    // Used for indirect pings (PIG_REQ) and related ACK
 }

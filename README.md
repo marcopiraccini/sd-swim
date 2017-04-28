@@ -29,7 +29,7 @@ Not yet implemented / supported:
 | pingReqTimeout           |  [TODO]         |   Ping Request Timeout                        |
 | pingReqGroupSize         |  [TODO]         |   Ping Request Group Size                     |
 | updatesMaxSize           |  50             |   Maximun number of updates sent in piggybacking             |
-| suspectTimeout           |  100            |   Timeout to mark a `SUSPSECT` node as `FAULTY`              |
+| suspectTimeout           |  100            |   Timeout to mark a `SUSPECT` node as `FAULTY`              |
 
 
 # SD-SWIM Protocol
@@ -176,8 +176,8 @@ This message is the first message used to join the group, and is sent to a set o
 
 | Field         |      Value    |  Notes                     |
 |---------------|:-------------:|---------------------------:|
-| target.host   |  IP_B         |                            |
-| target.port   |  11000        |                            |
+| destination.host   |  IP_B         |                            |
+| destination.port   |  11000        |                            |
 | type          | 0             |                            |
 
 
@@ -188,12 +188,12 @@ This message is the response to Join. When **Node_A** receive this message it:
 - Init the Memeber list with the one received from **Node_B**
 
 
-| Field         |      Value    |  Notes                     |
-|---------------|:-------------:|---------------------------:|
-| target.host   |  IP_A         |                            |
-| target.port   |  11000        |                            |
-| type          | 1             |                            |
-| members       |   node[]      |                            |
+| Field              |      Value    |  Notes                     |
+|--------------------|:-------------:|---------------------------:|
+| destination.host   |  IP_A         |                            |
+| destination.port   |  11000        |                            |
+| type               | 1             |                            |
+| members            |   node[]      |                            |
 
 
 This message is the first message used to join the group, and is sent to a set of members (targets) defined when the node is activated.
@@ -208,19 +208,21 @@ This message is used in Failure Detection. Every `T` time, is sent to a random m
 | updates       |   member[]    |  updates in piggybacking   |
 
 ## Ack
-This message is used in Failure detection, and it's an aswer to a **Ping** or a **PingReq*
+This message is used in Failure detection, and it's an aswer to a **Ping** or a **PingReq**
 
 | Field         |      Value    |  Notes                     |
 |---------------|:-------------:|---------------------------:|
 | type          | 3             |                            |
 | updates       |   member[]    |  updates in piggybacking   |
+| target        |   node        |  if ack of a **PingReq**   |
 
 ## PingReq
 This message is used to request an indirect IP a after a first ping failed.
 
-| Field         |      Value    |  Notes                     |
-|---------------|:-------------:|---------------------------:|
-| target.host   |  IP_A         | node to be checked indirectly |
-| target.port   |  110000       | node to be checked indirectly |
-| type          | 4             |                            |
-| updates       |   member[]    |  updates in piggybacking   |
+| Field              |      Value    |  Notes                     |
+|--------------------|:-------------:|---------------------------:|
+| destination.host   |  IP_A         |                            |
+| destination.port   |  110000       |                            |
+| type               | 4             |                            |
+| updates            |   member[]    |  updates in piggybacking   |
+| target             |   node        |  node to be checked indirectly   |
