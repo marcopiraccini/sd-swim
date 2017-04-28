@@ -37,7 +37,7 @@ describe('Failure Detector', () => {
       })
 
       sdswim.on('ping', target => {
-         assert.strictEqual(target.node.port, ports[0])
+         assert.strictEqual(target.port, ports[0])
          sdswim.stop(() => {
            done()
          })

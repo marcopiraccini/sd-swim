@@ -208,13 +208,15 @@ This message is used in Failure Detection. Every `T` time, is sent to a random m
 | updates       |   member[]    |  updates in piggybacking   |
 
 ## Ack
-This message is used in Failure detection, and it's an aswer to a **Ping** or a **PingReq**
+This message is used in Failure detection, and it's an aswer to a **Ping** or a **PingReq**.
+If the `request` is missing is a **Ping**. Otherwise it's a **PingReq**.
 
 | Field         |      Value    |  Notes                     |
 |---------------|:-------------:|---------------------------:|
 | type          | 3             |                            |
 | updates       |   member[]    |  updates in piggybacking   |
-| target        |   node        |  if ack of a **PingReq**   |
+| request.target     |   node        |  node to be checked indirectly   |
+| request.requester  |   node        |  the indirect check requester    |
 
 ## PingReq
 This message is used to request an indirect IP a after a first ping failed.
@@ -225,4 +227,5 @@ This message is used to request an indirect IP a after a first ping failed.
 | destination.port   |  110000       |                            |
 | type               | 4             |                            |
 | updates            |   member[]    |  updates in piggybacking   |
-| target             |   node        |  node to be checked indirectly   |
+| request.target     |   node        |  node to be checked indirectly   |
+| request.requester  |   node        |  the indirect check requester    |

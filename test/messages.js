@@ -58,11 +58,25 @@ describe('Messages', () => {
   })
 
   it('should create a PingReq message correctly', done => {
-    const pingMessage = messages.pingReqMessage(host1, updates)
+
+    const pingMessage = messages.pingReqMessage(host1, updates, host2, host3)
     const message = messages.decodeMessage(pingMessage.data)
     assert.equal(message.type, 4)
     assert.deepEqual(message.destination, host1)
     assert.deepEqual(message.updates, updates)
+    assert.deepEqual(message.request.target, host2)
+    assert.deepEqual(message.request.requester, host3)
+    done()
+  })
+
+  it('should create an Ack from a PingReq message correctly', done => {
+    const pingMessage = messages.ackMessage(host1, updates, host2, host3)
+    const message = messages.decodeMessage(pingMessage.data)
+    assert.equal(message.type, 3)
+    assert.deepEqual(message.destination, host1)
+    assert.deepEqual(message.updates, updates)
+    assert.deepEqual(message.request.target, host2)
+    assert.deepEqual(message.request.requester, host3)
     done()
   })
 

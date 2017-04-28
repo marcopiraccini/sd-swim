@@ -27,7 +27,12 @@ message Member {
   required Node node = 1;
   optional Node setBy = 2;
   optional NodeState state = 3 [default = 0];
-  optional int32 incNumber = 4 [default = 0];
+  optional int32 incNumber = 4 [default = 0]; // incarnation number
+}
+
+message IndirectRequest {
+  required Node target = 1;
+  required Node requester = 2;
 }
 
 /**
@@ -36,7 +41,7 @@ message Member {
 message Msg {
   optional Node destination = 1;
   required MessageType type = 2;
-  repeated Member members = 3; // The full list is sent only in join
-  repeated Member updates = 4; // To piggiback the updates
-  optional Node target = 5;    // Used for indirect pings (PIG_REQ) and related ACK
+  repeated Member members = 3;            // The full list is sent only in join
+  repeated Member updates = 4;            // To piggiback the updates
+  optional IndirectRequest request = 5;   // Used for indirect pings (PIG_REQ) and related ACK
 }
