@@ -29,7 +29,7 @@ Not yet implemented / supported:
 | pingReqTimeout           |  [TODO]         |   Ping Request Timeout                        |
 | pingReqGroupSize         |  [TODO]         |   Ping Request Group Size                     |
 | updatesMaxSize           |  50             |   Maximun number of updates sent in piggybacking             |
-| suspectTimeout           |  100            |   Timeout to mark a `SUSPECT` node as `FAULTY`              |
+| suspectTimeout           |  1000           |   Timeout to mark a `SUSPECT` node as `FAULTY`              |
 
 
 # SD-SWIM Protocol
