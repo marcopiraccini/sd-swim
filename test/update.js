@@ -37,7 +37,7 @@ describe('Update', () => {
   it('should create an alive update correctly passing the state', done => {
     const update = new Update({sdswim: node})
     const expected = [{node: host1, setBy: host2, state: ALIVE, incNumber: 1}]
-    update.addAliveUpdate(host1, host2, 1)
+    update.addUpdate(host1, host2, ALIVE, 1)
     const updates = update.getUpdates()
     assert.deepEqual(updates, expected)
     const temp = update.getUpdates()
@@ -48,7 +48,7 @@ describe('Update', () => {
   it('should create a faulty update correctly', done => {
     const update = new Update({sdswim: node})
     const expected = [{node: host1, setBy: host2, state: FAULTY, incNumber: 0}]
-    update.addFaultyUpdate(host1, host2, 0)
+    update.addUpdate(host1, host2, FAULTY, 0)
     const updates = update.getUpdates()
     assert.deepEqual(updates, expected)
     assert.deepEqual([], update.getUpdates()) // no more updates
@@ -58,7 +58,7 @@ describe('Update', () => {
   it('should create a suspect update correctly', done => {
     const update = new Update({sdswim: node})
     const expected = [{node: host1, setBy: host2, state: SUSPECT, incNumber: 0}]
-    update.addSuspectUpdate(host1, host2, 0)
+    update.addUpdate(host1, host2, SUSPECT, 0)
     const updates = update.getUpdates()
     assert.deepEqual(updates, expected)
     assert.deepEqual(update.getUpdates(), []) // no more updates
@@ -73,10 +73,10 @@ describe('Update', () => {
       {node: host1, setBy: host2, state: ALIVE, incNumber: 0},
       {node: host1, setBy: host2, state: ALIVE, incNumber: 0}
     ]
-    update.addSuspectUpdate(host1, host2, 0)
-    update.addFaultyUpdate(host1, host2, 0)
-    update.addAliveUpdate(host1, host2, 0)
-    update.addAliveUpdate(host1, host2, 0)
+    update.addUpdate(host1, host2, SUSPECT, 0)
+    update.addUpdate(host1, host2, FAULTY, 0)
+    update.addUpdate(host1, host2, ALIVE, 0)
+    update.addUpdate(host1, host2, ALIVE, 0)
     const updates = update.getUpdates()
     assert.deepEqual(updates, expected)
     assert.deepEqual(update.getUpdates(), []) // no more updates
@@ -93,10 +93,10 @@ describe('Update', () => {
     const moreExpected = [
       {node: host1, setBy: host2, state: ALIVE, incNumber: 0}
     ]
-    update.addSuspectUpdate(host1, host2, 0)
-    update.addFaultyUpdate(host1, host2, 0)
-    update.addAliveUpdate(host1, host2, 0)
-    update.addAliveUpdate(host1, host2, 0)
+    update.addUpdate(host1, host2, SUSPECT, 0)
+    update.addUpdate(host1, host2, FAULTY, 0)
+    update.addUpdate(host1, host2, ALIVE, 0)
+    update.addUpdate(host1, host2, ALIVE, 0)
     const updates = update.getUpdates()
     assert.deepEqual(updates, expected)
     const moreUpdates = update.getUpdates()
