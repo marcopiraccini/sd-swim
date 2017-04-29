@@ -11,37 +11,47 @@ a containerized process cannot know the HOST IP automatically.
 ## Notes
 Not yet implemented / supported:
 - No control on message size
-- Random failure detection (instead using round-robin + random reordering on completing the taversal)
+- Random failure detection (instead using round-robin + random reordering on completing the traversal)
 - Updates are sent using a FIFO queue (instead of preferring element gossiped fewer times)
 
 # Usage
 
-[TODO]
+```
+const hosts = [{host: '10.10.10.10', port: 12345}, {host: '10.10.10.11', port: 12345}]
+const sdswim = new SDSwim({port: 12345, hosts})
+```
+
+From command line:
+```
+node index 127.0.0.1:12340 127.0.0.1:12341
+```
 
 # Algorithm Parameters
 
 | Field                    |      Default    |  Notes                     |
 |--------------------------|:---------------:|------------------------------------------------------------------------------------:|
-| port                     |  2000           |   Mandatory, but can be 0 (in this case it's the first random free port)            |
-| joinTimeout              |  110000         |   After this timeout, if the join protocol is not completed, an error is generated  |
-| interval                 |  [TODO]         |   Interval for failure detection              |
-| pingTimeout              |  [TODO]         |   Ping Timeout                                |
-| pingReqTimeout           |  [TODO]         |   Ping Request Timeout                        |
-| pingReqGroupSize         |  [TODO]         |   Ping Request Group Size                     |
-| updatesMaxSize           |  50             |   Maximun number of updates sent in piggybacking             |
-| suspectTimeout           |  1000           |   Timeout to mark a `SUSPECT` node as `FAULTY`              |
+| port                     |  11000          |   Mandatory, but can be 0 (in this case it's the first random free port)            |
+| joinTimeout              |  2000           |   After this timeout, if the join protocol is not completed, an error is generated  |
+| interval                 |  100            |   Interval for failure detection. Every `interval` the failure detector is run, so it must be > of `pingTimeout` +  `pingReqTimeout`     |
+| pingTimeout              |  20             |   Ping Timeout. After this timeout, a pig-req is sent                               |
+| pingReqTimeout           |  60             |   Ping Request Timeout                        |
+| pingReqGroupSize         |  3              |   Ping Request Group Size                     |
+| updatesMaxSize           |  50             |   Maximum number of updates sent in piggybacking             |
+| suspectTimeout           |  1000           |   Timeout to mark a `SUSPECT` node as `FAULTY`               |
 
 
 # SD-SWIM Protocol
 
-SWIM is a membership protocol [https://www.cs.cornell.edu/~asdas/research/dsn02-swim.pdf],with the goal of having
+SWIM is a membership protocol [https://www.cs.cornell.edu/~asdas/research/dsn02-swim.pdf], with the goal of having
 each node of a distributed system an updated "member list".
 
-This implementation add a small join protocol used to join the group when a node has no a priori knowledge of his own address.
+This implementation add a small join protocol to the protocol defined in the paper above, that it's used to join the group
+when a node has no a priori knowledge of his own address.
 
 ## Join Protocol
-The `join` phase is used to connect to a group, getting this list and updating the other member's membership lists.
-A Sends a Join message to B with {B_IP} (cannot sent his own IP because it doesn't know it), e.g.:
+The `join` phase is used when a node start to connect to a group, getting the initial member list and updating the other member's membership lists with himself.
+
+**Example**: A Sends a *Join* message to B with {B_IP} (cannot sent his own IP because it doesn't know it), e.g.:
 
 ```
     {
@@ -66,33 +76,35 @@ When B receives the Join message, it:
 
     }
 ```
-A receives the UpdateJoin and save his own IP and init the member list.
-A will receive multiple updates (at maximum one for each Join sent).
+A receives the *UpdateJoin* and save his own IP and init the member list.
+A will receive multiple updates (at maximum one for each *Join* sent).
 The first valid response is used by A to set his own IP and the (full) initial member list.
-(sending the full memebre list from another node is the quicker way to start gossiping with other nodes).
-Subsequent UpdateJoin received are ignored, since the initial member list is
+(sending the full member list from another node is the quicker way to start gossiping with other nodes).
+Subsequent *UpdateJoin* received are ignored, since the initial member list is
 already set and the node knows is IP.
 
 
-# Failure Detector
+# Failure Detection
 
-Using two params:
-- `T`: Protocol Period
-- `k`: Failure detector subgroups
+Use these params:
+- `interval`: Protocol Period
+- `pingReqGroupSize`: Failure detector subgroups
+- `pingTimeout`
+- `pingReqTimeout`
 
-Given a node `Mi`, every `T`:
-- It selects a random member from the list `Mj` and sends him a `ping`
-- `Mi` waits for the answer.
-  - Answer not received after a timeout:
-    - `Mi` selects a `k`members randomly and sends a `ping-req(Mj)` message
-    - Every node of those, send in turn `ping(Mj)` and returns the answer to `Mi`
-- After `T`, Mi check if an `ack` from `mj` has been received, directly or through one of the `k` members. If not, marks `Mj` as failed and start
-disseminating the update (see below)
+Given a node A, every `interval`:
+- It selects a random member from the list B and sends a `ping`
+- A waits for the answer.
+  - Answer not received after a `pingTimeout`:
+    - A selects a `pingReqGroupSize` members randomly and sends a `ping-req(B)` message
+    - Every node of those, send in turn `ping(B)` and returns the answer to A
+- After `interval`, A check if an `ack` from B has been received, directly or through one of the `pingReqGroupSize` members. If not, marks B as SUSPECT and start disseminating the update(see below).
 
 # Dissemination
 The dissemination of updates is done through piggybacking of `ping`, `ping-req` and `ack` messages.
-Every node maintains a list of updates to be propagated, and when it sends one of the above messages, add these changes
-to the payload. When a message is received, the updates payload is processed and changes are applied to the member list.
+Every node maintains a list of updates to be propagated, and when it sends one of the above messages, add these changes to the payload.
+When a message is received, these updates are processed and if necessary, changes
+are applied to the member list.
 
 Every update entry has the form:
 ```
