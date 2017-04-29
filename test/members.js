@@ -34,14 +34,14 @@ describe('Members', () => {
     const expected4 = {node: host1, state: SUSPECT, setBy: host3, incNumber: 0}
 
     assert.deepEqual([], members.list)
-    members.addMember(host1, ALIVE)
-    members.addMember(host2, ALIVE)
+    members.addOrUpdateMember(host1, ALIVE)
+    members.addOrUpdateMember(host2, ALIVE)
     assert.deepEqual([expected1, expected2], members.list)
 
-    members.addMember(host1, FAULTY)
+    members.addOrUpdateMember(host1, FAULTY)
     assert.deepEqual([expected3, expected2], members.list)
 
-    members.addMember(host1, SUSPECT, host3) // set by a different host
+    members.addOrUpdateMember(host1, SUSPECT, host3) // set by a different host
     assert.deepEqual([expected4, expected2], members.list)
 
     done()
