@@ -31,6 +31,12 @@ If it's not the first node, we have to specify the host:port list to be joined:
 node index -p 10000 127.0.0.1:12340 127.0.0.1:12341
 ```
 If the join fails, the process exit.
+If the `list` option is set, prints out to console the member list every `-l` millis
+(can be useful for debugging), e.g.:
+```
+node index -p 10000 -l 1000
+```
+
 
 # Algorithm Parameters
 
@@ -139,10 +145,10 @@ These rules are applied when an update is processed:
 | Condition                                           |      Member List                    |  Updates                   |
 |-----------------------------------------------------|:-----------------------------------:|---------------------------:|
 | Node not present                                    |   Member added as `ALIVE`           |     Propagated             |
-| Node present and `ALIVE`, with incNumber < i        |   Member updated (setBy, incNumber) |     Propagated             |
-| Node present and `ALIVE`, with incNumber >= i       |                                     ||
+| Node present and `ALIVE`, with incNumber <= i       |   Member updated (setBy, incNumber) |     Propagated             |
+| Node present and `ALIVE`, with incNumber >  i       |                                     |     Drop                   |
 | Node present and `SUSPECTED`, with incNumber <= i   |   Member updated as `ALIVE`         |     Propagated             |
-| Node present and `SUSPECTED`, with incNumber >  i   |                                     ||
+| Node present and `SUSPECTED`, with incNumber >  i   |                                     |     Drop                   |
 
 `SUSPECT`, with `incNumber` = i
 
@@ -150,20 +156,20 @@ These rules are applied when an update is processed:
 |-------------------------------------------------------|:-----------------------------------:|---------------------------:|
 | Node is me                                            |   incNumber is incremented          |     new `ALIVE` update created   |
 | Node not present                                      |   Member added as `SUSPECT`         |     Propagated                   |
-| Member present and `ALIVE`, with incNumber < i        |   Member changed to `SUSPECT`       |     Propagated                   |
-| Member present and `ALIVE`, with incNumber >= i       |                                     ||
+| Member present and `ALIVE`, with incNumber <= i       |   Member changed to `SUSPECT`       |     Propagated                   |
+| Member present and `ALIVE`, with incNumber  > i       |                                     |     Drop                         |
 | Member present and `SUSPECTED`, with incNumber <=  i  |   Member updated (setBy, incNumber) |     Propagated                   |
-| Member present and `SUSPECTED`, with incNumber >  i   |                                     ||
+| Member present and `SUSPECTED`, with incNumber >  i   |                                     |     Drop                         |
 
 
 `FAULTY`, with `incNumber` = i
 
 | Condition                                           |      Member List                    |  Updates                   |
 |-----------------------------------------------------|:-----------------------------------:|---------------------------:|
-| Node not present                                    |                                     ||
+| Node not present                                    |                                     |     Propagated                        |
 | Node is me                                          |   incNumber is incremented          |     new `ALIVE` update created        |
 | Node present and `ALIVE`, with incNumber < i        |   remove from the alive nodes       |     Propagated                        |
-| Node present,             with incNumber >= i       |                                     ||
+| Node present,             with incNumber >= i       |                                     |     Drop                              |
 
 `pingReqTimeout` reached with no acks by Failure Detector:
 

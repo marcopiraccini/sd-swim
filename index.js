@@ -10,23 +10,25 @@ function start () {
   const error = logger.error.bind(logger)
 
   const argv = minimist(process.argv.slice(2), {
-    integer: ['port'],
+    integer: ['port', 'list'],
     boolean: ['verbose'],
     alias: {
       port: 'p',
       help: 'H',
       verbose: 'v',
+      list: 'l',
       joinTimeout: 'j' // join timeout
     },
     default: {
       // We could also assume that the default is 0. If so, UDP try to bind to
       // a random port
       port: process.env.SWIM_PORT || 11000,
-      verbose: false
+      verbose: false,
+      list: 0
     }
   })
 
-  const usage = `Usage: ${process.argv[1]} [-p PORT] [-jt 2000] -v host1[:port1] host2[:port2]...`
+  const usage = `Usage: ${process.argv[1]} [-p PORT] [-jt 2000] [-l 1000] -v host1[:port1] host2[:port2]...`
   if (argv.help) {
     console.error(usage)
     process.exit(1)
@@ -75,9 +77,12 @@ function start () {
   })
   sdswim.start()
 
-  // setInterval(() => {
-  //   console.log(sdswim.memberList)
-  // }, 1000)
+  if (argv.list ) {
+    setInterval(() => {
+      console.log('*****************************************')
+      console.log(sdswim.memberList)
+    }, argv.list)
+  }
 }
 
 if (require.main === module) {
