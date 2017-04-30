@@ -59,7 +59,7 @@ describe('Messages', () => {
 
   it('should create a PingReq message correctly', done => {
 
-    const pingMessage = messages.pingReqMessage(host1, updates, host2, host3)
+    const pingMessage = messages.pingReqMessage(host1, host2, host3, updates)
     const message = messages.decodeMessage(pingMessage.data)
     assert.equal(message.type, 4)
     assert.deepEqual(message.destination, host1)
