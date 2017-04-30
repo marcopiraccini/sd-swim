@@ -10,9 +10,10 @@ a containerized process cannot know the HOST IP automatically.
 
 ## Notes
 Not yet implemented / possible improvements:
+- Updates are sent using a FIFO queue (instead of preferring element gossiped fewer times)
+**[TODO: counting the number of the time an update has been gossiped is necessary for full-working algorithm]**
 - No control on message size
 - Random failure detection (instead using round-robin + random reordering on completing the traversal)
-- Updates are sent using a FIFO queue (instead of preferring element gossiped fewer times)
 
 # Usage
 
