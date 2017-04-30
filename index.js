@@ -73,8 +73,11 @@ function start () {
     error(err)
     process.exit(1)
   })
-
   sdswim.start()
+
+  // setInterval(() => {
+  //   console.log(sdswim.memberList)
+  // }, 1000)
 }
 
 if (require.main === module) {
