@@ -22,6 +22,7 @@ describe('Update', () => {
 
   const host1 = {host: 'host1', port: 1234}
   const host2 = {host: 'host2', port: 5678}
+  const host3 = {host: 'host3', port: 5679}
 
   it('should create an alive update correctly', done => {
     const update = new Update({sdswim: node})
@@ -115,19 +116,40 @@ describe('Update', () => {
     }
     update.processUpdates([updateToAlive])
     assert.deepEqual(node.memberList, [host1])
+    assert.deepEqual(node.opts.members.list, [updateToAlive])
     done()
   })
 
-  it('should process an ALIVE update correctly with unknown member', done => {
+  it('should process an ALIVE update correctly with member with incNumber < than the update', done => {
     const update = node.opts.update
-    const updateToAlive = {
-      node: host1,
-      state: ALIVE,
-      setBy: host2,
-      incNumber: 0
-    }
+    const updateToAlive = {node: host1, state: ALIVE, setBy: host2, incNumber: 0}
     update.processUpdates([updateToAlive])
+    const newUpdateToAlive = {node: host1, state: ALIVE, setBy: host3, incNumber: 1}
+    update.processUpdates([newUpdateToAlive])
     assert.deepEqual(node.memberList, [host1])
+    assert.deepEqual(node.opts.members.list, [newUpdateToAlive])
+    done()
+  })
+
+  it('should process an ALIVE update correctly with member with incNumber >= than the update', done => {
+    const update = node.opts.update
+    const updateToAlive = {node: host1, state: ALIVE, setBy: host2, incNumber: 1}
+    update.processUpdates([updateToAlive])
+    const newUpdateToAlive = {node: host1, state: ALIVE, setBy: host3, incNumber: 0}
+    update.processUpdates([newUpdateToAlive])
+    assert.deepEqual(node.memberList, [host1])
+    assert.deepEqual(node.opts.members.list, [updateToAlive])
+    done()
+  })
+
+  it('should process an ALIVE update correctly with a SUSPECT member with incNumber <= than the update', done => {
+    const update = node.opts.update
+    const updateToAlive = {node: host1, state: SUSPECT, setBy: host2, incNumber: 0}
+    update.processUpdates([updateToAlive])
+    const newUpdateToAlive = {node: host1, state: ALIVE, setBy: host3, incNumber: 1}
+    update.processUpdates([newUpdateToAlive])
+    assert.deepEqual(node.memberList, [host1])
+    assert.deepEqual(node.opts.members.list, [newUpdateToAlive])
     done()
   })
 

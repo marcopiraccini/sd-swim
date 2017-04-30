@@ -16,6 +16,7 @@ describe('SD-Swim', () => {
     // start a single node, that should know only his port.
     // Default port:
     const sdswim = new SDSwim({logger: pino()})
+
     sdswim.on('up', () => {
       const myself = sdswim.whoami()
       assert.strictEqual(myself.host, undefined)
