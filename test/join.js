@@ -45,14 +45,8 @@ describe('Join', () => {
     })
     sdswim.on('updated-members', membersList => {
       const expectedList = [
-        { node: { host: '127.0.0.1', port: 12345 },
-          state: 0,
-          setBy: { host: '127.0.0.1', port: 12345 },
-          incNumber: 0},
-        { node: { host: '127.0.0.1', port: 12340 },
-          state: 0,
-          setBy: { host: '127.0.0.1', port: 12345 },
-          incNumber: 0} ]
+        { host: '127.0.0.1', port: 12345 },
+        { host: '127.0.0.1', port: 12340 }]
 
       assert.deepEqual(membersList, expectedList)
       assert.deepEqual(target.memberList, expectedList)
@@ -62,7 +56,7 @@ describe('Join', () => {
       assert.deepEqual(target.port, 12345)
 
       // must return the memebr list, excluding himself
-      const otherMembers = sdswim.members.getOtherNonFaultyMembers()
+      const otherMembers = sdswim.members.getOtherNonFaultyMembers().map(({node}) => node)
 
       assert.deepEqual(otherMembers, [expectedList[0]])
 

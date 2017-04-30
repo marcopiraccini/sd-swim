@@ -105,4 +105,30 @@ describe('Update', () => {
     done()
   })
 
+  it('should process an ALIVE update correctly with unknown member', done => {
+    const update = node.opts.update
+    const updateToAlive = {
+      node: host1,
+      state: ALIVE,
+      setBy: host2,
+      incNumber: 0
+    }
+    update.processUpdates([updateToAlive])
+    assert.deepEqual(node.memberList, [host1])
+    done()
+  })
+
+  it('should process an ALIVE update correctly with unknown member', done => {
+    const update = node.opts.update
+    const updateToAlive = {
+      node: host1,
+      state: ALIVE,
+      setBy: host2,
+      incNumber: 0
+    }
+    update.processUpdates([updateToAlive])
+    assert.deepEqual(node.memberList, [host1])
+    done()
+  })
+
 })
