@@ -65,6 +65,10 @@ function start () {
     info({id: sdswim.whoami()}, 'Joined')
   })
 
+  sdswim.on('updated-members', members => {
+    info({members}, 'Members List Update')
+  })
+
   sdswim.on('error', err => {
     error(err)
     process.exit(1)

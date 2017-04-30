@@ -9,7 +9,7 @@ This can be a problem when running nodes in container-based architectures, where
 a containerized process cannot know the HOST IP automatically.
 
 ## Notes
-Not yet implemented / supported:
+Not yet implemented / possible improvements:
 - No control on message size
 - Random failure detection (instead using round-robin + random reordering on completing the traversal)
 - Updates are sent using a FIFO queue (instead of preferring element gossiped fewer times)
@@ -19,12 +19,18 @@ Not yet implemented / supported:
 ```
 const hosts = [{host: '10.10.10.10', port: 12345}, {host: '10.10.10.11', port: 12345}]
 const sdswim = new SDSwim({port: 12345, hosts})
+sdswmin.memberList // array of current members (active and suspect)
 ```
 
-From command line:
+From command line, specify the port (-p), if verbose (-v), e.g.:
 ```
-node index 127.0.0.1:12340 127.0.0.1:12341
+node index -p 10000
 ```
+If it's not the first node, we have to specify the host:port list to be joined:
+```
+node index -p 10000 127.0.0.1:12340 127.0.0.1:12341
+```
+If the join fails, the process exit.
 
 # Algorithm Parameters
 
