@@ -142,10 +142,10 @@ These rules are applied when an update is processed:
 
 | Condition                                             |      Member List                    |  Updates                   |
 |-------------------------------------------------------|:-----------------------------------:|---------------------------:|
-| Node not present                                      |   Member added as `SUSPECT`         |     Propagated                   |
 | Node is me                                            |   incNumber is incremented          |     new `ALIVE` update created   |
-| Member present and `ALIVE`, with incNumber < i        |   Member changed to `SUSPECT`       |     Propagated                   |
-| Member present and `ALIVE`, with incNumber >= i       |                                     ||
+| Node not present                                      |   Member added as `SUSPECT`         |     Propagated                   |
+| Member present with incNumber < i                     |   Member changed to `SUSPECT`       |     Propagated                   |
+| Member present with incNumber >= i                    |                                     ||
 | Member present and `SUSPECTED`, with incNumber <=  i  |   Member updated (setBy, incNumber) |     Propagated                   |
 | Member present and `SUSPECTED`, with incNumber >  i   |                                     ||
 
