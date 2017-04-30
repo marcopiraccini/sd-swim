@@ -260,4 +260,72 @@ describe('Update', () => {
 
   })
 
+  describe('Given an FAULTY update', () => {
+
+    it('should ignore a FAULTY update if member is not present', done => {
+      const update = node.opts.update
+      const updateToFaulty = {
+        node: host1,
+        state: FAULTY,
+        setBy: host2,
+        incNumber: 0
+      }
+      update.processUpdates([updateToFaulty])
+      assert.deepEqual(node.memberList, [])
+      done()
+    })
+
+    it('should create an ALIVE message if target is ME', done => {
+      // a new ALIVE message must be produces with incNumber incremented
+      const update = node.opts.update
+      node.host = host1.host
+      node.port = host1.port
+      const updateToFaulty = {
+        node: host1,
+        state: FAULTY,
+        setBy: host2,
+        incNumber: 0
+      }
+      update.processUpdates([updateToFaulty])
+      assert.deepEqual(node.memberList, [host1])
+
+      const expectedMember = {
+        node: host1,
+        state: ALIVE,
+        setBy: host1,
+        incNumber: 1
+      }
+      assert.deepEqual(node.opts.members.list, [expectedMember])
+      assert.deepEqual(update.getUpdates(), [expectedMember])
+      done()
+    })
+
+    it('should create a FAULTY update correctly (remove the member and propagates the update) when member with incNumber < than the update', done => {
+      const update = node.opts.update
+      const updateToAlive = {node: host1, state: ALIVE, setBy: host2, incNumber: 0}
+      update.processUpdates([updateToAlive])
+      assert.deepEqual(update.getUpdates(), [updateToAlive])
+      const newUpdateToFaulty = {node: host1, state: FAULTY, setBy: host3, incNumber: 1}
+      update.processUpdates([newUpdateToFaulty])
+      assert.deepEqual(node.memberList, [])
+      assert.deepEqual(node.opts.members.list, [])
+      assert.deepEqual(update.getUpdates(), [newUpdateToFaulty])
+      done()
+    })
+
+    it('should ignore a FAULTY update when member with incNumber >= than the update', done => {
+      const update = node.opts.update
+      const updateToAlive = {node: host1, state: ALIVE, setBy: host2, incNumber: 1}
+      update.processUpdates([updateToAlive])
+      assert.deepEqual(update.getUpdates(), [updateToAlive])
+      const newUpdateToFaulty = {node: host1, state: FAULTY, setBy: host3, incNumber: 0}
+      update.processUpdates([newUpdateToFaulty])
+      assert.deepEqual(node.memberList, [host1])
+      assert.deepEqual(node.opts.members.list, [updateToAlive])
+      assert.deepEqual(update.getUpdates(), [])
+      done()
+    })
+
+  })
+
 })
