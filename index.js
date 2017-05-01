@@ -7,6 +7,7 @@ const SDSwim = require('./lib/sd-swim')
 function start () {
   const logger = pino()
   const info = logger.info.bind(logger)
+  const debug = logger.info.bind(logger)
   const error = logger.error.bind(logger)
 
   const argv = minimist(process.argv.slice(2), {
@@ -68,7 +69,7 @@ function start () {
   })
 
   sdswim.on('updated-members', members => {
-    info({members}, 'Members List Update')
+    debug({members}, 'Members List Update')
   })
 
   sdswim.on('error', err => {

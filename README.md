@@ -10,8 +10,6 @@ a containerized process cannot know the HOST IP automatically.
 
 ## Notes
 Not yet implemented / possible improvements:
-- Updates are sent using a FIFO queue (instead of preferring element gossiped fewer times)
-**[TODO: counting the number of the time an update has been gossiped is necessary for full-working algorithm]**
 - No control on message size
 - Random failure detection (instead using round-robin + random reordering on completing the traversal)
 
@@ -50,6 +48,7 @@ node index -p 10000 -l 1000
 | pingReqTimeout           |  60             |   Ping Request Timeout                        |
 | pingReqGroupSize         |  3              |   Ping Request Group Size                     |
 | updatesMaxSize           |  50             |   Maximum number of updates sent in piggybacking             |
+| dissemination factor     |  15             |   An update is gossiped until a maximum of (df*ln(size))     |
 | suspectTimeout           |  1000           |   Timeout to mark a `SUSPECT` node as `FAULTY`               |
 
 
