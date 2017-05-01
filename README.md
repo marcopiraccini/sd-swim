@@ -146,7 +146,7 @@ These rules are applied when an update is processed:
 |-----------------------------------------------------|:-----------------------------------:|---------------------------:|
 | Node not present                                    |   Member added as `ALIVE`           |     Propagated             |
 | Node present and `ALIVE`, with incNumber <= i       |   Member updated (setBy, incNumber) |     Propagated             |
-| Node present and `ALIVE`, with incNumber >  i       |                                     |     Drop                   |
+| Node present and `ALIVE`, with incNumber >  i       |                                     |     Propagated             |
 | Node present and `SUSPECTED`, with incNumber <= i   |   Member updated as `ALIVE`         |     Propagated             |
 | Node present and `SUSPECTED`, with incNumber >  i   |                                     |     Drop                   |
 
