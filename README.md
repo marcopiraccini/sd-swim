@@ -168,8 +168,8 @@ These rules are applied when an update is processed:
 |-----------------------------------------------------|:-----------------------------------:|---------------------------:|
 | Node not present                                    |                                     |     Propagated                        |
 | Node is me                                          |   incNumber is incremented          |     new `ALIVE` update created        |
-| Node present and `ALIVE`, with incNumber < i        |   remove from the alive nodes       |     Propagated                        |
-| Node present,             with incNumber >= i       |                                     |     Drop                              |
+| Node is me                                          |   incNumber is incremented          |     new `ALIVE` update created    |
+| Node present                                        |   remove from the alive nodes       |     Propagated                    |
 
 `pingReqTimeout` reached with no acks by Failure Detector:
 

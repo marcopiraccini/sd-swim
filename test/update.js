@@ -22,6 +22,7 @@ describe('Update', () => {
   const host1 = {host: 'host1', port: 1234}
   const host2 = {host: 'host2', port: 5678}
   const host3 = {host: 'host3', port: 5679}
+  const host4 = {host: 'host4', port: 5679}
 
   it('should create an alive update correctly', done => {
     const update = node.opts.update
@@ -69,14 +70,14 @@ describe('Update', () => {
     const update = node.opts.update
     const expected = [
       {node: host1, setBy: host2, state: SUSPECT, incNumber: 0},
-      {node: host1, setBy: host2, state: FAULTY, incNumber: 0},
-      {node: host1, setBy: host2, state: ALIVE, incNumber: 0},
-      {node: host1, setBy: host2, state: ALIVE, incNumber: 0}
+      {node: host2, setBy: host2, state: FAULTY, incNumber: 0},
+      {node: host3, setBy: host2, state: ALIVE, incNumber: 0},
+      {node: host4, setBy: host2, state: ALIVE, incNumber: 0}
     ]
     update.addUpdate(host1, host2, SUSPECT, 0)
-    update.addUpdate(host1, host2, FAULTY, 0)
-    update.addUpdate(host1, host2, ALIVE, 0)
-    update.addUpdate(host1, host2, ALIVE, 0)
+    update.addUpdate(host2, host2, FAULTY, 0)
+    update.addUpdate(host3, host2, ALIVE, 0)
+    update.addUpdate(host4, host2, ALIVE, 0)
     const updates = update.getUpdates()
     assert.deepEqual(updates, expected)
     assert.deepEqual(update.getUpdates(), []) // no more updates, member list is 0 so also the dissemination Limit
@@ -88,14 +89,14 @@ describe('Update', () => {
     update.opts.members.list = new Array(100) // a (empty) member list of 100 memebrs
     const expected = [
       {node: host1, setBy: host2, state: SUSPECT, incNumber: 0},
-      {node: host1, setBy: host2, state: FAULTY, incNumber: 0},
-      {node: host1, setBy: host2, state: ALIVE, incNumber: 0},
-      {node: host1, setBy: host2, state: ALIVE, incNumber: 0}
+      {node: host2, setBy: host2, state: FAULTY, incNumber: 0},
+      {node: host3, setBy: host2, state: ALIVE, incNumber: 0},
+      {node: host4, setBy: host2, state: ALIVE, incNumber: 0}
     ]
     update.addUpdate(host1, host2, SUSPECT, 0)
-    update.addUpdate(host1, host2, FAULTY, 0)
-    update.addUpdate(host1, host2, ALIVE, 0)
-    update.addUpdate(host1, host2, ALIVE, 0)
+    update.addUpdate(host2, host2, FAULTY, 0)
+    update.addUpdate(host3, host2, ALIVE, 0)
+    update.addUpdate(host4, host2, ALIVE, 0)
     const updates = update.getUpdates()
     assert.deepEqual(updates, expected)
     assert.deepEqual(update.getUpdates(), expected) // expecting the same
@@ -107,13 +108,13 @@ describe('Update', () => {
     update.updatesMaxSize = 3
     const expected = [
       {node: host1, setBy: host2, state: SUSPECT, incNumber: 0},
-      {node: host1, setBy: host2, state: FAULTY, incNumber: 0},
-      {node: host1, setBy: host2, state: ALIVE, incNumber: 0}
+      {node: host2, setBy: host2, state: FAULTY, incNumber: 0},
+      {node: host3, setBy: host2, state: ALIVE, incNumber: 0}
     ]
     update.addUpdate(host1, host2, SUSPECT, 0)
-    update.addUpdate(host1, host2, FAULTY, 0)
-    update.addUpdate(host1, host2, ALIVE, 0)
-    update.addUpdate(host1, host2, ALIVE, 0)
+    update.addUpdate(host2, host2, FAULTY, 0)
+    update.addUpdate(host3, host2, ALIVE, 0)
+    update.addUpdate(host4, host2, ALIVE, 0)
     const updates = update.getUpdates()
     assert.deepEqual(updates, expected)
     done()
@@ -323,19 +324,6 @@ describe('Update', () => {
       assert.deepEqual(node.memberList, [])
       assert.deepEqual(node.opts.members.list, [])
       assert.deepEqual(update.getUpdates(), [newUpdateToFaulty, updateToAlive])
-      done()
-    })
-
-    it('should ignore a FAULTY update when member with incNumber >= than the update', done => {
-      const update = node.opts.update
-      const updateToAlive = {node: host1, state: ALIVE, setBy: host2, incNumber: 1}
-      update.processUpdates([updateToAlive])
-      assert.deepEqual(update.getUpdates(), [updateToAlive])
-      const newUpdateToFaulty = {node: host1, state: FAULTY, setBy: host3, incNumber: 0}
-      update.processUpdates([newUpdateToFaulty])
-      assert.deepEqual(node.memberList, [host1])
-      assert.deepEqual(node.opts.members.list, [updateToAlive])
-      assert.deepEqual(update.getUpdates(), [updateToAlive])
       done()
     })
 
