@@ -28,6 +28,7 @@ message Member {
   optional Node setBy = 2;
   optional NodeState state = 3 [default = 0];
   optional int32 incNumber = 4 [default = 0]; // incarnation number
+  optional string uuid = 5;
 }
 
 message IndirectRequest {

@@ -12,7 +12,7 @@ module.exports = {
   globals: '__core-js_shared__', // came from power-assert
   lint: true,
   timeout: 35e3,
-  threshold: 89, // lowered temporary
+  threshold: 88, // lowered temporary
   transform: './node_modules/lab-espower-transformer',
   verbose: true,
   reporter: outputs.map(o => o.reporter),
