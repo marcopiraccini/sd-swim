@@ -4,6 +4,7 @@ const Lab = require('lab')
 const lab = exports.lab = Lab.script()
 const assert = require('power-assert')
 const Messages = require('../lib/messages')
+const uuidV4 = require('uuid/v4')
 const {describe, it} = lab
 
 describe('Messages', () => {
@@ -12,8 +13,12 @@ describe('Messages', () => {
   const host2 = {host: 'host2', port: 5678}
   const host3 = {host: 'host3', port: 9101}
   const members = []
-  members.push({node: host1, state: 0, setBy: host3, incNumber: 0, uuid: "1"})
-  members.push({node: host2, state: 0, setBy: host3, incNumber: 0, uuid: "2"})
+  const uuid1 = new Buffer(16)
+  const uuid2 = new Buffer(16)
+  uuidV4(null, uuid1, 0)
+  uuidV4(null, uuid2, 0);
+  members.push({node: host1, state: 0, setBy: host3, incNumber: 0, uuid: uuid1})
+  members.push({node: host2, state: 0, setBy: host3, incNumber: 0, uuid: uuid2})
   const updates = members
 
   const messages = new Messages()
