@@ -94,7 +94,7 @@ describe('Failure Detector', () => {
         // TODO: stop and check the member list after every stop
 
         done()
-      }, 1000)
+      }, 2000)
 
     })
   })
