@@ -91,9 +91,17 @@ describe('Failure Detector', () => {
         assert.deepEqual(nodes[4].memberList, expectedMemberListAfterStart)
         assert.deepEqual(nodes[5].memberList, expectedMemberListAfterStart)
 
-        // TODO: stop and check the member list after every stop
+        // Stop and check the member list after every stop
+        return nodes[5].stop()
+          .then(() => {
+            return done()
+          })
+          .catch(err => {
+            console.log("err", err)
+            return done()
 
-        done()
+          })
+
       }, 2000)
 
     })

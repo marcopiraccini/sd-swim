@@ -18,8 +18,23 @@ Not yet implemented / possible improvements:
 ```
 const hosts = [{host: '10.10.10.10', port: 12345}, {host: '10.10.10.11', port: 12345}]
 const sdswim = new SDSwim({port: 12345, hosts})
-sdswmin.memberList // array of current members (active and suspect)
 ```
+
+Then start using callback:
+```
+sdswim.start(port => {
+  console.log(`Node started on port ${port}`)
+})
+```
+...or promises:
+```
+sdswim.start().then(port => port => console.log(`Node started on port ${port}`))
+```
+When started, use `memberList` to obatain an array of current members :(active and suspect)
+```
+sdswmin.memberList
+```
+# Command Line 
 
 From command line, specify the port (-p), if verbose (-v), e.g.:
 ```

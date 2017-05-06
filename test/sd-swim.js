@@ -128,9 +128,9 @@ describe('SD-Swim', () => {
     })
   })
 
-  it('should start a sd-swim node using promises', done => {
+  it('should start a sd-swim node using promises', () => {
     const sdswim = new SDSwim({logger: pino()})
-    sdswim.start().then(() => sdswim.stop()).then(done)
+    return sdswim.start().then(() => sdswim.stop())
   })
 
   it('should fail starting on the same port, using promises', done => {
@@ -146,6 +146,11 @@ describe('SD-Swim', () => {
         assert.strictEqual(sdswim2.whoami().state, STOPPED)
         return sdswim.stop(done)
       })
+  })
+
+  it('should sopt a sd-swim node twice without errors', () => {
+    const sdswim = new SDSwim({logger: pino()})
+    return sdswim.start().then(() => sdswim.stop()).then(() => sdswim.stop())
   })
 
 })
