@@ -34,7 +34,21 @@ When started, use `memberList` to obatain an array of current members :(active a
 ```
 sdswmin.memberList
 ```
-# Command Line 
+
+To stop
+```
+sdswim.stop(err => {
+  console.log('Node stopped')
+})
+```
+
+or
+```
+sdswim.stop().then(() => console.log('Node stopped))
+
+```
+
+# Command Line
 
 From command line, specify the port (-p), if verbose (-v), e.g.:
 ```
