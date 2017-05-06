@@ -17,12 +17,11 @@ describe('Failure Detector', () => {
     let target
     const nodeOpts = [{port: 12340}]
 
-    beforeEach(done => startNodes(nodeOpts, function(err, results) {
+    beforeEach(() => startNodes(nodeOpts).then(results => {
       [target] = results
-      done()
     }))
 
-    afterEach(done => stopNodes([target], done))
+    afterEach(() => stopNodes([target]))
 
     it('should send a ping message to target after join', done => {
 
@@ -65,12 +64,11 @@ describe('Failure Detector', () => {
        {port: 12344, hosts: [{host: '127.0.0.1', port:12340}]},
        {port: 12345, hosts: [{host: '127.0.0.1', port:12340}]}]
 
-    beforeEach(done => startNodes(opts, function(err, res) {
-      nodes = res
-      done(err)
-    }))
+     beforeEach(() => startNodes(opts).then(results => {
+       nodes = results
+     }))
 
-    afterEach(done => stopNodes(nodes, done))
+    afterEach(() => stopNodes(nodes))
 
     it('should start 5 nodes, and then stop them one by one and the member lists must be coherent', () => {
 

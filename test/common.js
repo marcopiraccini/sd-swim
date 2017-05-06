@@ -1,23 +1,10 @@
-const {concatSeries} = require('async')
 const SDSwim = require('../lib/sd-swim')
 
-exports.startNode = (opts, cb) => {
+exports.startNode = opts => {
   const target = new SDSwim(opts)
-  target.start(err => {
-    cb(err, target)
-  })
+  return target.start().then(() => target)
 }
-
-exports.stopNode = (node, cb) => {
-  node.stop(err => {
-    cb(err)
-  })
-}
-
-// Start nodes on the same host, using the ports array
-exports.startNodes = (opts, cb) => concatSeries(opts, exports.startNode, cb)
-
-// Start nodes on the same host, using the ports array
-exports.stopNodes = (nodes, cb) => concatSeries(nodes, exports.stopNode, cb)
-
+exports.stopNode = node => node.stop()
+exports.startNodes = opts => Promise.all(opts.map(opt => exports.startNode(opt)))
+exports.stopNodes = nodes => Promise.all(nodes.map(node => exports.stopNode(node)))
 exports.delay = t => () => new Promise(resolve => setTimeout(resolve, t))
