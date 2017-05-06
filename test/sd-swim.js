@@ -133,4 +133,19 @@ describe('SD-Swim', () => {
     sdswim.start().then(() => sdswim.stop()).then(done)
   })
 
+  it('should fail starting on the same port, using promises', done => {
+    const port = 12345
+    const sdswim = new SDSwim({port})
+    const sdswim2 = new SDSwim({port}) // same port
+    sdswim2.on('error', () => {})
+    sdswim.start()
+      .then(() => sdswim2.start())
+      .then(() => assert.fail('Must generate an error (two nodeswith the same port)'))
+      .catch(err => {
+        assert.strictEqual(err.code, 'EADDRINUSE')
+        assert.strictEqual(sdswim2.whoami().state, STOPPED)
+        return sdswim.stop(done)
+      })
+  })
+
 })
