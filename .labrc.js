@@ -11,7 +11,7 @@ module.exports = {
   leaks: true,
   globals: '__core-js_shared__', // came from power-assert
   lint: true,
-  timeout: 35e3,
+  timeout: 10e3,
   threshold: 87, // lowered temporary
   transform: './node_modules/lab-espower-transformer',
   verbose: true,

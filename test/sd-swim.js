@@ -28,6 +28,7 @@ describe('SD-Swim', () => {
         done()
       })
     })
+
     sdswim.start()
   })
 
@@ -96,6 +97,7 @@ describe('SD-Swim', () => {
     const sdswim = new SDSwim({port})
     sdswim.start(() => {
       const sdswim2 = new SDSwim({port}) // same port
+      sdswim2.on('error', () => {})
       sdswim2.start(err => {
         assert.strictEqual(err.code, 'EADDRINUSE')
         assert.strictEqual(sdswim2.whoami().state, STOPPED)
@@ -124,6 +126,11 @@ describe('SD-Swim', () => {
         })
       })
     })
+  })
+
+  it('should start a sd-swim node using promises', done => {
+    const sdswim = new SDSwim({logger: pino()})
+    sdswim.start().then(() => sdswim.stop()).then(done)
   })
 
 })
