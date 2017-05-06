@@ -7,7 +7,7 @@ const SDSwim = require('../lib/sd-swim')
 const {states: {JOINED}} = require('../lib/states')
 const pino = require('pino')
 const assert = require('power-assert')
-const {startNodes, stopNodes} = require('./common')
+const {startNodes, stopNodes, delay} = require('./common')
 
 
 describe('Failure Detector', () => {
@@ -72,7 +72,7 @@ describe('Failure Detector', () => {
 
     afterEach(done => stopNodes(nodes, done))
 
-    it('should start 5 nodes, and then stop them and the member list must be coherent', done => {
+    it('should start 5 nodes, and then stop them one by one and the member lists must be coherent', () => {
 
       const expectedMemberListAfterStart =
       [ { host: '127.0.0.1', port: 12340 },
@@ -82,28 +82,61 @@ describe('Failure Detector', () => {
         { host: '127.0.0.1', port: 12344 },
         { host: '127.0.0.1', port: 12345 } ]
 
+      const waitStart = delay(2000) // Startup of all nodes
+      const waitClose = delay(2000) // must be higher than the "suspect" timeout
+
       // check the member list after 2 secs
-      setTimeout(() => {
-        assert.deepEqual(nodes[0].memberList, expectedMemberListAfterStart)
-        assert.deepEqual(nodes[1].memberList, expectedMemberListAfterStart)
-        assert.deepEqual(nodes[2].memberList, expectedMemberListAfterStart)
-        assert.deepEqual(nodes[3].memberList, expectedMemberListAfterStart)
-        assert.deepEqual(nodes[4].memberList, expectedMemberListAfterStart)
-        assert.deepEqual(nodes[5].memberList, expectedMemberListAfterStart)
-
-        // Stop and check the member list after every stop
-        return nodes[5].stop()
-          .then(() => {
-            return done()
-          })
-          .catch(err => {
-            console.log("err", err)
-            return done()
-
-          })
-
-      }, 2000)
-
+      return waitStart()
+        .then(() => {
+          assert.deepEqual(nodes[0].memberList, expectedMemberListAfterStart)
+          assert.deepEqual(nodes[1].memberList, expectedMemberListAfterStart)
+          assert.deepEqual(nodes[2].memberList, expectedMemberListAfterStart)
+          assert.deepEqual(nodes[3].memberList, expectedMemberListAfterStart)
+          assert.deepEqual(nodes[4].memberList, expectedMemberListAfterStart)
+          assert.deepEqual(nodes[5].memberList, expectedMemberListAfterStart)
+          // All memebres lists are OK. now stop and check the member list after every stop
+          return nodes[5].stop()
+        })
+        .then(waitClose)
+        .then(() => {
+          expectedMemberListAfterStart.pop()
+          assert.deepEqual(nodes[0].memberList, expectedMemberListAfterStart)
+          assert.deepEqual(nodes[1].memberList, expectedMemberListAfterStart)
+          assert.deepEqual(nodes[2].memberList, expectedMemberListAfterStart)
+          assert.deepEqual(nodes[3].memberList, expectedMemberListAfterStart)
+          assert.deepEqual(nodes[4].memberList, expectedMemberListAfterStart)
+          return nodes[4].stop()
+        })
+        .then(waitClose)
+        .then(() => {
+          expectedMemberListAfterStart.pop()
+          assert.deepEqual(nodes[0].memberList, expectedMemberListAfterStart)
+          assert.deepEqual(nodes[1].memberList, expectedMemberListAfterStart)
+          assert.deepEqual(nodes[2].memberList, expectedMemberListAfterStart)
+          assert.deepEqual(nodes[3].memberList, expectedMemberListAfterStart)
+          return nodes[3].stop()
+        })
+        .then(waitClose)
+        .then(() => {
+          expectedMemberListAfterStart.pop()
+          assert.deepEqual(nodes[0].memberList, expectedMemberListAfterStart)
+          assert.deepEqual(nodes[1].memberList, expectedMemberListAfterStart)
+          assert.deepEqual(nodes[2].memberList, expectedMemberListAfterStart)
+          return nodes[2].stop()
+        })
+        .then(waitClose)
+        .then(() => {
+          expectedMemberListAfterStart.pop()
+          assert.deepEqual(nodes[0].memberList, expectedMemberListAfterStart)
+          assert.deepEqual(nodes[1].memberList, expectedMemberListAfterStart)
+          return nodes[1].stop()
+        })
+        .then(waitClose)
+        .then(() => {
+          expectedMemberListAfterStart.pop()
+          assert.deepEqual(nodes[0].memberList, expectedMemberListAfterStart)
+          return nodes[0].stop()
+        })
     })
   })
 })

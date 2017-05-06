@@ -19,3 +19,5 @@ exports.startNodes = (opts, cb) => concatSeries(opts, exports.startNode, cb)
 
 // Start nodes on the same host, using the ports array
 exports.stopNodes = (nodes, cb) => concatSeries(nodes, exports.stopNode, cb)
+
+exports.delay = t => () => new Promise(resolve => setTimeout(resolve, t))
