@@ -1,17 +1,12 @@
 # SD-SWIM
-Self- discovery minimal implementation of SWIM membership protocol that uses Protocol Buffers over UDP
-for message exchange.
+Self- discovery minimal implementation of SWIM membership protocol that uses Protocol Buffers
+[https://developers.google.com/protocol-buffers/] over UDP for message exchange.
 
 ## Why "self discovery"?
-When a node joins a group using SWIM, it must know his own IP, which is actively
+When a node join a group using SWIM, it must know his own IP, which is actively
 used in protocol implementation.
-This can be a problem when running nodes in container-based architectures, where
+This can be an issue when running nodes in container-based architectures, where
 a containerized process cannot know the HOST IP automatically.
-
-## Notes
-Not yet implemented / possible improvements:
-- No control on message size
-- Random failure detection (instead using round-robin + random reordering on completing the traversal)
 
 # Usage
 
@@ -30,7 +25,7 @@ sdswim.start(port => {
 ```
 sdswim.start().then(port => port => console.log(`Node started on port ${port}`))
 ```
-When started, use `memberList` to obatain an array of current members :(active and suspect)
+When started, use `memberList` to obatain an array of current members (active and suspect):
 ```
 sdswmin.memberList
 ```
@@ -50,11 +45,11 @@ sdswim.stop().then(() => console.log('Node stopped))
 
 # Command Line
 
-From command line, specify the port (-p), if verbose (-v), e.g.:
+It's possible to launch SWIM from command line, specifying the port (-p), if verbose (-v), e.g.:
 ```
 node index -p 10000
 ```
-If it's not the first node, we have to specify the host:port list to be joined:
+If it's not the first node, we have to specify the `host:port` list to be joined:
 ```
 node index -p 10000 127.0.0.1:12340 127.0.0.1:12341
 ```
@@ -90,9 +85,10 @@ This implementation add a small join protocol to the protocol defined in the pap
 when a node has no a priori knowledge of his own address.
 
 ## Join Protocol
-The `join` phase is used when a node start to connect to a group, getting the initial member list and updating the other member's membership lists with himself.
+The `join` protocol is used when a node try to connect to a group, getting the initial member list
+and updating the other member's membership lists with himself.
 
-**Example**: A Sends a *Join* message to B with {B_IP} (cannot sent his own IP because it doesn't know it), e.g.:
+**Example**: A Sends a *Join* message to B with {B_IP} (cannot sent his own IP because we assume it doesn't know it), e.g.:
 
 ```
     {
@@ -103,9 +99,9 @@ The `join` phase is used when a node start to connect to a group, getting the in
     }
 ```
 
-When B receives the Join message, it:
-- saves it own IP (if not known)
-- answer with a JoinAck message:
+When B receives the *Join* message, it:
+- saves it own IP (it's possible is still unknown)
+- answer with a *JoinAck* message:
 
 ```
     {
@@ -113,19 +109,19 @@ When B receives the Join message, it:
           "host": 10.10.10.11, // A_IP
           "port": 5678         // A_PORT
         },
-        "members": { (...)  }
+        "members": { (...) }   // The full members list, ask known by B
     }
 ```
 A receives the *JoinAck* and saves his own IP and init the member list.
 A will receive multiple updates (at maximum one for each *Join* sent).
-The first valid response is used by A to set his own IP and the (full) initial member list.
-(sending the full member list from another node is the quicker way to start gossiping with other nodes).
+The first valid response is used by A to set his own IP and the (full) initial member list, indeed
+sending the full member list from another node is the quicker way to start gossiping with other nodes.
 Subsequent *JoinAck* received are silently ignored, since the initial member list is
 already set and the node knows is IP.
 
-# Failure Detection
+## Failure Detection
 
-Use these params:
+These are the protocol parameters:
 - `interval`: Protocol Period
 - `pingReqGroupSize`: Failure detector subgroups
 - `pingTimeout`
@@ -139,7 +135,7 @@ Given a node A, every `interval`:
     - Every node of those, send in turn `ping(B)` and returns the answer to A
 - After `interval`, A check if an `ack` from B has been received, directly or through one of the `pingReqGroupSize` members. If not, marks B as SUSPECT and start disseminating the update(see below).
 
-# Dissemination
+## Dissemination
 The dissemination of updates is done through piggybacking of `ping`, `ping-req` and `ack` messages.
 Every node maintains a list of updates to be propagated, and when it sends one of the above messages, add these changes to the payload.
 When a message is received, these updates are processed and if necessary, changes
@@ -167,7 +163,7 @@ only when a node receives an update message on himself. It's used to drop (and n
 ### Update rules
 These rules are applied when an update is processed:
 
-`ALIVE`, with `incNumber` = i
+####`ALIVE`, with `incNumber` = i
 
 | Condition                                           |      Member List                    |  Updates                   |
 |-----------------------------------------------------|:-----------------------------------:|---------------------------:|
@@ -215,7 +211,7 @@ This implementation uses protobuf https://github.com/mafintosh/protocol-buffers
 
 The messages generated are:
 - Join
-- UpdateJoin
+- JoinAck
 - Ping
 - Ack
 - PingReq
@@ -231,7 +227,7 @@ This message is the first message used to join the group, and is sent to a set o
 | type          | 0             |                            |
 
 
-## UpdateJoin
+## JoinAck
 
 This message is the response to Join. When **Node_A** receive this message it:
 - Saves it's own IP
@@ -279,3 +275,8 @@ This message is used to request an indirect IP a after a first ping failed.
 | updates            |   member[]    |  updates in piggybacking   |
 | request.target     |   node        |  node to be checked indirectly   |
 | request.requester  |   node        |  the indirect check requester    |
+
+## Notes / TODOs
+Not yet implemented / possible improvements:
+- No control on message size
+- Random failure detection (instead using round-robin + random reordering on completing the traversal)
