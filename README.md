@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/marcopiraccini/sd-swim.svg?branch=master)](https://travis-ci.org/marcopiraccini/sd-swim)
+
 # SD-SWIM
 Self- discovery minimal implementation of SWIM membership protocol that uses Protocol Buffers
 [https://developers.google.com/protocol-buffers/] over UDP for message exchange.
