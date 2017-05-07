@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "lab -r lcov -o ./coverage/lcov.info",
-    "ci": "lab -r lcov -o ./coverage/lcov.info && ./node_modules/.bin/coveralls ./coverage/lcov.info",
+    "test": "lab -r console -o stdout  -r lcov -o ./coverage/lcov.info",
+    "ci": "lab -r console -o stdout -r lcov -o ./coverage/lcov.info && ./node_modules/.bin/coveralls ./coverage/lcov.info",
     "lint": "eslint .",
     "depcheck": "dependency-check package.json --unused --no-dev --entry test/*.js --entry index.js",
     "nsp": "nsp check",

@@ -26,7 +26,7 @@ sdswim.start(port => {
 ```
 sdswim.start().then(port => port => console.log(`Node started on port ${port}`))
 ```
-When started, use `memberList` to obatain an array of current members (active and suspect):
+When started, use `memberList` to obtain an array of current members (active and suspect):
 ```
 sdswmin.memberList
 ```
