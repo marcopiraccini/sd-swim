@@ -163,7 +163,7 @@ only when a node receives an update message on himself. It's used to drop (and n
 ### Update rules
 These rules are applied when an update is processed:
 
-####`ALIVE`, with `incNumber` = i
+#### `ALIVE`, with `incNumber` = i
 
 | Condition                                           |      Member List                    |  Updates                   |
 |-----------------------------------------------------|:-----------------------------------:|---------------------------:|
@@ -173,7 +173,7 @@ These rules are applied when an update is processed:
 | Node present and `SUSPECTED`, with incNumber <= i   |   Member updated as `ALIVE`         |     Propagated             |
 | Node present and `SUSPECTED`, with incNumber >  i   |                                     |     Drop                   |
 
-`SUSPECT`, with `incNumber` = i
+#### `SUSPECT`, with `incNumber` = i
 
 | Condition                                             |      Member List                    |  Updates                   |
 |-------------------------------------------------------|:-----------------------------------:|---------------------------:|
@@ -185,7 +185,7 @@ These rules are applied when an update is processed:
 | Member present and `SUSPECTED`, with incNumber >  i   |                                     |     Drop                         |
 
 
-`FAULTY`, with `incNumber` = i
+#### `FAULTY`, with `incNumber` = i
 
 | Condition                                           |      Member List                    |  Updates                   |
 |-----------------------------------------------------|:-----------------------------------:|---------------------------:|
@@ -193,13 +193,13 @@ These rules are applied when an update is processed:
 | Node is me                                          |   incNumber is incremented          |     new `ALIVE` update created        |
 | Node present                                        |   remove from the alive nodes       |     Propagated                    |
 
-`pingReqTimeout` reached with no acks by Failure Detector:
+####  `pingReqTimeout` reached with no acks by Failure Detector:
 
 | Condition                                           |      Member List Updates            |  Updates Propagations      |
 |-----------------------------------------------------|:-----------------------------------:|---------------------------:|
 | `pingReqTimeout` reached with no acks               |   change status to `SUSPECT`        |     new `SUSPECT` created  |
 
-`suspectTimeout` reached by Dissemination module
+#### `suspectTimeout` reached by Dissemination module
 
 | Condition                                           |      Member List Updates            |  Updates Propagations      |
 |-----------------------------------------------------|:-----------------------------------:|---------------------------:|
