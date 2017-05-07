@@ -151,7 +151,7 @@ describe('Failure Detector', () => {
       const afterSecondRestart =  cloneDeep(expected)
 
       const waitStart = delay(1000) // Startup of all nodes
-      const wait = delay(2000) // must be higher than the "fault node" timeout
+      const wait = delay(2000) // must be higher than the "fault node" timeout (2x suspect timeout)
 
       let new4, new5
 

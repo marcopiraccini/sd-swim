@@ -105,7 +105,7 @@ The `join` phase is used when a node start to connect to a group, getting the in
 
 When B receives the Join message, it:
 - saves it own IP (if not known)
-- answer with a UpdateJoin message:
+- answer with a JoinAck message:
 
 ```
     {
@@ -114,16 +114,14 @@ When B receives the Join message, it:
           "port": 5678         // A_PORT
         },
         "members": { (...)  }
-
     }
 ```
-A receives the *UpdateJoin* and save his own IP and init the member list.
+A receives the *JoinAck* and saves his own IP and init the member list.
 A will receive multiple updates (at maximum one for each *Join* sent).
 The first valid response is used by A to set his own IP and the (full) initial member list.
 (sending the full member list from another node is the quicker way to start gossiping with other nodes).
-Subsequent *UpdateJoin* received are ignored, since the initial member list is
+Subsequent *JoinAck* received are silently ignored, since the initial member list is
 already set and the node knows is IP.
-
 
 # Failure Detection
 

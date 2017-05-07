@@ -35,9 +35,9 @@ describe('Messages', () => {
     done()
   })
 
-  it('should create an UpdateJoin message correctly', done => {
-    const updateJoinMessage = messages.updateJoinMessage(host1, members)
-    const message = messages.decodeMessage(updateJoinMessage.data)
+  it('should create an JoinAck message correctly', done => {
+    const joinAckMessage = messages.joinAckMessage(host1, members)
+    const message = messages.decodeMessage(joinAckMessage.data)
     assert.equal(message.type, 1)
     assert.deepEqual(message.destination, host1)
     assert.deepEqual(message.members, members)

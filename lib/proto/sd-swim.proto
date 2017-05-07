@@ -3,7 +3,7 @@
  */
 enum MessageType {
   JOIN = 0;
-  UPDATE_JOIN = 1;
+  JOIN_ACK = 1;
   PING = 2;
   ACK = 3;
   PING_REQ = 4;
@@ -42,7 +42,7 @@ message IndirectRequest {
 message Msg {
   optional Node destination = 1;
   required MessageType type = 2;
-  repeated Member members = 3;            // The full list is sent only in join
+  repeated Member members = 3;            // The full list, is sent only in join_ack
   repeated Member updates = 4;            // To piggiback the updates
   optional IndirectRequest request = 5;   // Used for indirect pings (PIG_REQ) and related ACK
 }

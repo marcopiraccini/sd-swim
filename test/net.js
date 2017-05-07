@@ -7,7 +7,7 @@ const pino = require('pino')
 const proxyquire = require('proxyquire')
 const {describe, it, before, beforeEach} = lab
 const Messages = require('../lib/messages')
-const Update = require('../lib/update')
+const Dissemination = require('../lib/dissemination')
 
 describe('Network Communication', () => {
 
@@ -31,7 +31,7 @@ describe('Network Communication', () => {
       'dgram' : mockedDgram
     })
     net = new Net({logger: pino()})
-    net.update = new Update({})
+    net.dissemination = new Dissemination({})
     done()
   })
 
