@@ -5,12 +5,12 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "lab -r console -o stdout  -r lcov -o ./coverage/lcov.info",
+    "test": "lab test",
     "ci": "lab -r console -o stdout -r lcov -o ./coverage/lcov.info && cat ./coverage/lcov.info | ./node_modules/.bin/coveralls ./coverage/lcov.info",
     "lint": "eslint .",
     "depcheck": "dependency-check package.json --unused --no-dev --entry test/*.js --entry index.js",
     "nsp": "nsp check",
-    "prepush": "npm run nsp && npm run depcheck && npm test"
+    "prepush": "npm run nsp && npm run depcheck && npm run lint && npm test"
   },
   "repository": {
     "type": "git",
@@ -43,7 +43,6 @@
     "dependency-check": "^2.8.0",
     "eslint": "^3.19.0",
     "eslint-config-standard": "^10.2.1",
-    "eslint-plugin-async": "^0.1.1",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-node": "^4.2.2",
     "eslint-plugin-promise": "^3.5.0",
