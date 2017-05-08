@@ -1,9 +1,2 @@
 # recommended profile includes all checked rules from this page: http://eslint.org/docs/rules
-extends: 'eslint:recommended'
-
-env:
-  es6: true
-  node: true
-
-parserOptions:
-  ecmaVersion: 2017
+extends: 'standard'

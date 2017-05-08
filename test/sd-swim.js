@@ -9,9 +9,7 @@ const {describe, it} = lab
 const SDSwim = require('../lib/sd-swim')
 const {states: {STARTED, STOPPED}} = require('../lib/states')
 
-
 describe('SD-Swim', () => {
-
   it('should start a sd-swim node using default port (11000)', done => {
     // start a single node, that should know only his port.
     // Default port:
@@ -152,5 +150,4 @@ describe('SD-Swim', () => {
     const sdswim = new SDSwim({logger: pino()})
     return sdswim.start().then(() => sdswim.stop()).then(() => sdswim.stop())
   })
-
 })

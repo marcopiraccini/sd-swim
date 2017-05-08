@@ -10,7 +10,6 @@ const Messages = require('../lib/messages')
 const Dissemination = require('../lib/dissemination')
 
 describe('Network Communication', () => {
-
   let net
   let sentMessages = []
   const opts = {}
@@ -28,7 +27,7 @@ describe('Network Communication', () => {
       createSocket: () => (mockedClient)
     }
     const Net = proxyquire('../lib/net', {
-      'dgram' : mockedDgram
+      'dgram': mockedDgram
     })
     net = new Net({logger: pino()})
     net.dissemination = new Dissemination({})

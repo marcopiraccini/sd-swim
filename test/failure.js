@@ -11,9 +11,7 @@ const {startNodes, stopNodes, delay, compareMembers} = require('./common')
 const {cloneDeep} = require('lodash')
 
 describe('Failure Detector', () => {
-
-  describe('given a started node', () =>  {
-
+  describe('given a started node', () => {
     let target
     const nodeOpts = [{port: 12340}]
 
@@ -24,7 +22,6 @@ describe('Failure Detector', () => {
     afterEach(() => stopNodes([target]))
 
     it('should send a ping message to target after join', done => {
-
       const hosts = [{host: '127.0.0.1', port: target.port}]
 
       // start a single node that join the target.
@@ -35,45 +32,42 @@ describe('Failure Detector', () => {
       })
 
       sdswim.on('ping', target => {
-         assert.strictEqual(target.port, nodeOpts[0].port)
-         sdswim.stop(() => {
-           done()
-         })
+        assert.strictEqual(target.port, nodeOpts[0].port)
+        sdswim.stop(() => {
+          done()
+        })
       })
 
       sdswim.on('ack', target => {
-         assert.strictEqual(target.port, nodeOpts[0].port)
-         sdswim.stop(() => {
-           done()
-         })
+        assert.strictEqual(target.port, nodeOpts[0].port)
+        sdswim.stop(() => {
+          done()
+        })
       })
 
       sdswim.start()
     })
-
   })
 
-  describe('given 5 started nodes', () =>  {
-
+  describe('given 5 started nodes', () => {
     let nodes
     const opts =
       [{port: 12340},
-       {port: 12341, hosts: [{host: '127.0.0.1', port:12340}], suspectTimeout: 500},
-       {port: 12342, hosts: [{host: '127.0.0.1', port:12340}], suspectTimeout: 500},
-       {port: 12343, hosts: [{host: '127.0.0.1', port:12340}], suspectTimeout: 500},
-       {port: 12344, hosts: [{host: '127.0.0.1', port:12340}], suspectTimeout: 500},
-       {port: 12345, hosts: [{host: '127.0.0.1', port:12340}], suspectTimeout: 500}]
+       {port: 12341, hosts: [{host: '127.0.0.1', port: 12340}], suspectTimeout: 500},
+       {port: 12342, hosts: [{host: '127.0.0.1', port: 12340}], suspectTimeout: 500},
+       {port: 12343, hosts: [{host: '127.0.0.1', port: 12340}], suspectTimeout: 500},
+       {port: 12344, hosts: [{host: '127.0.0.1', port: 12340}], suspectTimeout: 500},
+       {port: 12345, hosts: [{host: '127.0.0.1', port: 12340}], suspectTimeout: 500}]
 
-     beforeEach(() => startNodes(opts).then(results => {
-       nodes = results
-     }))
+    beforeEach(() => startNodes(opts).then(results => {
+      nodes = results
+    }))
 
     afterEach(() => stopNodes(nodes))
 
     it('should start 5 nodes, and then stop them one by one and the member lists must be coherent', () => {
-
       const expected =
-      [ { host: '127.0.0.1', port: 12340 },
+        [ { host: '127.0.0.1', port: 12340 },
         { host: '127.0.0.1', port: 12341 },
         { host: '127.0.0.1', port: 12342 },
         { host: '127.0.0.1', port: 12343 },
@@ -81,7 +75,7 @@ describe('Failure Detector', () => {
         { host: '127.0.0.1', port: 12345 } ]
 
       const waitStart = delay(1000) // Startup of all nodes
-      const waitClose = delay(1500) // must be higher than the "suspect" timeout
+      const waitClose = delay(1500) // must be higher than the 'suspect' timeout
 
       // check the member list after 2 secs
       return waitStart()
@@ -138,7 +132,6 @@ describe('Failure Detector', () => {
     })
 
     it('should start 5 nodes, and then stop and restart two of them and the member lists must be coherent', () => {
-
       const expected =
         [ { host: '127.0.0.1', port: 12340 },
           { host: '127.0.0.1', port: 12341 },
@@ -147,11 +140,11 @@ describe('Failure Detector', () => {
           { host: '127.0.0.1', port: 12344 },
           { host: '127.0.0.1', port: 12345 } ]
 
-      const afterFirstRestart = [expected[0], expected[1], expected[2],expected[3], expected[5]]
-      const afterSecondRestart =  cloneDeep(expected)
+      const afterFirstRestart = [expected[0], expected[1], expected[2], expected[3], expected[5]]
+      const afterSecondRestart = cloneDeep(expected)
 
       const waitStart = delay(1000) // Startup of all nodes
-      const wait = delay(2000) // must be higher than the "fault node" timeout (2x suspect timeout)
+      const wait = delay(2200) // must be higher than the 'fault node' timeout (2x suspect timeout)
 
       let new4, new5
 

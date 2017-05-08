@@ -52,7 +52,7 @@ function start () {
   }
 
   const opts = Object.assign({hosts, logger}, argv)
-  opts.logLevel  ='debug'
+  opts.logLevel = 'debug'
   const sdswim = new SDSwim(opts)
 
   sdswim.on('join-sent', () => {
@@ -78,7 +78,7 @@ function start () {
   })
   sdswim.start()
 
-  if (argv.list ) {
+  if (argv.list) {
     setInterval(() => {
       console.log('*****************************************')
       console.log(sdswim.memberList)
@@ -89,3 +89,5 @@ function start () {
 if (require.main === module) {
   start()
 }
+
+module.exports = require('./lib/sd-swim')

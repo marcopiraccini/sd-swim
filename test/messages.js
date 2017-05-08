@@ -8,15 +8,14 @@ const uuidV4 = require('uuid/v4')
 const {describe, it} = lab
 
 describe('Messages', () => {
-
   const host1 = {host: 'host1', port: 1234}
   const host2 = {host: 'host2', port: 5678}
   const host3 = {host: 'host3', port: 9101}
   const members = []
-  const uuid1 = new Buffer(16)
-  const uuid2 = new Buffer(16)
+  const uuid1 = Buffer.alloc(16)
+  const uuid2 = Buffer.alloc(16)
   uuidV4(null, uuid1, 0)
-  uuidV4(null, uuid2, 0);
+  uuidV4(null, uuid2, 0)
   members.push({node: host1, state: 0, setBy: host3, incNumber: 0, uuid: uuid1})
   members.push({node: host2, state: 0, setBy: host3, incNumber: 0, uuid: uuid2})
   const updates = members
@@ -63,7 +62,6 @@ describe('Messages', () => {
   })
 
   it('should create a PingReq message correctly', done => {
-
     const pingMessage = messages.pingReqMessage(host1, host2, host3, updates)
     const message = messages.decodeMessage(pingMessage.data)
     assert.equal(message.type, 4)
@@ -84,5 +82,4 @@ describe('Messages', () => {
     assert.deepEqual(message.request.requester, host3)
     done()
   })
-
 })

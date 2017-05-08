@@ -6,7 +6,6 @@ const SDSwim = require('../lib/sd-swim')
 const {nodeStates: {ALIVE, SUSPECT, FAULTY}} = require('../lib/states')
 
 describe('Members', () => {
-
   let node
   const nodePort = 12345
 
@@ -46,5 +45,4 @@ describe('Members', () => {
 
     done()
   })
-
 })

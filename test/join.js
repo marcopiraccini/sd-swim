@@ -9,7 +9,6 @@ const SDSwim = require('../lib/sd-swim')
 const {states: {JOINED}} = require('../lib/states')
 
 describe('Join', () => {
-
   let target
   const targetPort = 12345
 
@@ -22,7 +21,7 @@ describe('Join', () => {
     target.stop(done)
   })
 
-  it('should join and emit the "joined" event', done => {
+  it('should join and emit the joined event', done => {
     const hosts = [{host: '127.0.0.1', port: target.port}]
     // start a single node that join the target.
     const sdswim = new SDSwim({port: 12340, hosts})
@@ -72,7 +71,7 @@ describe('Join', () => {
       assert.equal(err, null)
     })
     sdswim.on('updated-members', () => {
-      assert.fail("shoudn't receive an answer to join")
+      assert.fail('shoudn\'t receive an answer to join')
       sdswim.stop(done)
     })
     sdswim.on('error', err => {
@@ -83,5 +82,4 @@ describe('Join', () => {
 
   it.skip('TODO - MISSING TEST: join more than one host')
   it.skip('TODO - MISSING TEST: timout trigger when join successful')
-
 })
