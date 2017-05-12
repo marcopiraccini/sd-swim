@@ -61,7 +61,6 @@ If the `list` option is set, prints out to console the member list every `-l` mi
 node index -p 10000 -l 1000
 ```
 
-
 # Algorithm Parameters
 
 | Field                    |      Default    |  Notes                     |
@@ -129,12 +128,15 @@ These are the protocol parameters:
 - `pingReqTimeout`
 
 Given a node A, every `interval`:
-- It selects a random member from the list B and sends a `ping`
+- It selects a member from the list B using the member seleciton algorithm (see below) the and sends a `ping`
 - A waits for the answer.
   - Answer not received after a `pingTimeout`:
-    - A selects a `pingReqGroupSize` members randomly and sends a `ping-req(B)` message
+    - A selects a `pingReqGroupSize` members (again with the same algorithm) and sends a `ping-req(B)` message
     - Every node of those, send in turn `ping(B)` and returns the answer to A
 - After `interval`, A check if an `ack` from B has been received, directly or through one of the `pingReqGroupSize` members. If not, marks B as SUSPECT and start disseminating the update(see below).
+
+### Member Selection Algorithm
+[TODO]
 
 ## Dissemination
 The dissemination of updates is done through piggybacking of `ping`, `ping-req` and `ack` messages.
@@ -246,7 +248,7 @@ This message is the response to Join. When **Node_A** receive this message it:
 This message is the first message used to join the group, and is sent to a set of members (targets) defined when the node is activated.
 
 ## Ping
-This message is used in Failure Detection. Every `T` time, is sent to a random member od his member list
+This message is used in Failure Detection. Every `T` time, is sent to a member of his member list
 (see the full description of the algorithm).
 
 | Field         |      Value    |  Notes                     |
