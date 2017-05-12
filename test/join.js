@@ -7,6 +7,7 @@ const lab = exports.lab = Lab.script()
 const {describe, it, beforeEach, afterEach} = lab
 const SDSwim = require('../lib/sd-swim')
 const {states: {JOINED}} = require('../lib/states')
+const {compareNodesLists} = require('./common')
 
 describe('Join', () => {
   let target
@@ -46,18 +47,13 @@ describe('Join', () => {
       const expectedList = [
         { host: '127.0.0.1', port: 12345 },
         { host: '127.0.0.1', port: 12340 }]
+      compareNodesLists(membersList, expectedList)
+      compareNodesLists(target.memberList, expectedList)
 
-      assert.deepEqual(membersList, expectedList)
-      assert.deepEqual(target.memberList, expectedList)
       assert.deepEqual(sdswim.host, '127.0.0.1')
       assert.deepEqual(sdswim.port, 12340)
       assert.deepEqual(target.host, '127.0.0.1')
       assert.deepEqual(target.port, 12345)
-
-      // must return the memebr list, excluding himself
-      const otherMembers = sdswim.members.getOtherNonFaultyMembers().map(({node}) => node)
-
-      assert.deepEqual(otherMembers, [expectedList[0]])
 
       sdswim.stop(done)
     })
