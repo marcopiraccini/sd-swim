@@ -280,4 +280,3 @@ This message is used to request an indirect IP a after a first ping failed.
 ## Notes / TODOs
 Not yet implemented / possible improvements:
 - No control on message size
-- Random failure detection (instead using round-robin + random reordering on completing the traversal)
