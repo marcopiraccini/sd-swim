@@ -43,6 +43,24 @@ or
 sdswim.stop().then(() => console.log('Node stopped))
 
 ```
+## Events
+SD-Swim is an `EventEmitter`, so it's possible to listen
+for `up`, `joined` and `updated-members` events:
+
+```
+sdswim.on('up', port => {
+  console.log(`Node up and listening on port ${port}`)
+})
+
+sdswim.on('joined', () => {
+  console.log('Node correctly joined the group')
+})
+
+sdswim.on('updated-members', membersList => {
+  console.log(`Members List updated. Current list has ${membersList.length} members`)
+})
+
+```
 
 # Command Line
 
