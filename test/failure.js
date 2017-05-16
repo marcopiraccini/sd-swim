@@ -12,14 +12,14 @@ const {cloneDeep} = require('lodash')
 
 describe('Failure Detector', () => {
   describe('given a started node', () => {
-    let target
+    let target, node1, node2
     const nodeOpts = [{port: 12340}]
 
     beforeEach(() => startNodes(nodeOpts).then(results => {
       [target] = results
     }))
 
-    afterEach(() => stopNodes([target]))
+    afterEach(() => stopNodes([target, node1, node2]))
 
     it('should send a ping message to target after join', done => {
       const hosts = [{host: '127.0.0.1', port: target.port}]
@@ -46,6 +46,32 @@ describe('Failure Detector', () => {
       })
 
       sdswim.start()
+    })
+
+    it('should generate peerUp and peerDown events', done => {
+      const hosts = [{host: '127.0.0.1', port: target.port}]
+
+      // start node1. start node2. stop node2.
+      // Check that the events are emitted correctly in node1
+      node1 = new SDSwim({logger: pino(), port: 12341, hosts})
+      node2 = new SDSwim({logger: pino(), port: 12342, hosts})
+
+      node1.on('peerUp', ({port}) => {
+        assert.strictEqual(port, node2.port)
+      })
+
+      node1.on('peerDown', ({port}) => {
+        assert.strictEqual(port, node2.port)
+        done()
+      })
+
+      node1.start()
+      .then(delay(1000))
+      .then(() => node2.start())
+      .then(delay(1000))
+      .then(() => node2.stop())
+      .then(() => {
+      })
     })
   })
 

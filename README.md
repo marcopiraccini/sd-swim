@@ -45,7 +45,7 @@ sdswim.stop().then(() => console.log('Node stopped))
 ```
 ## Events
 SD-Swim is an `EventEmitter`, so it's possible to listen
-for `up`, `joined` and `updated-members` events:
+for `up`, `joined`, `peerUp`, `peerDown` and updated-members` events:
 
 ```
 sdswim.on('up', port => {
@@ -57,7 +57,15 @@ sdswim.on('joined', () => {
 })
 
 sdswim.on('updated-members', membersList => {
-  console.log(`Members List updated. Current list has ${membersList.length} members`)
+  console.log(`Whole members list updated (join successful). Current list has ${membersList.length} members`)
+})
+
+sdswim.on('peerUp', node => {
+  console.log(`Node added as active ${node.host}:${node.port}`)
+})
+
+sdswim.on('peerDown', node => {
+  console.log(`Node added as faulty ${node.host}:${node.port}`)
 })
 
 ```
