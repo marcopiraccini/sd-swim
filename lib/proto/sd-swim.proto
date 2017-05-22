@@ -1,5 +1,5 @@
 /**
- * Supported message types
+ * Supported base message types
  */
 enum MessageType {
   JOIN = 0;
@@ -7,6 +7,7 @@ enum MessageType {
   PING = 2;
   ACK = 3;
   PING_REQ = 4;
+  EXT = 5;
 }
 
 /**
@@ -37,7 +38,7 @@ message IndirectRequest {
 }
 
 /**
- * SD-SWIM message
+ * SD-SWIM Protocol Message
  */
 message Msg {
   optional Node destination = 1;
@@ -45,4 +46,33 @@ message Msg {
   repeated Member members = 3;            // The full list, is sent only in join_ack
   repeated Member updates = 4;            // To piggiback the updates
   optional IndirectRequest request = 5;   // Used for indirect pings (PIG_REQ) and related ACK
+}
+
+// METADATA DISTRIBUTION EXTENSION ******************************
+
+/**
+ * Supported extension message types.
+ * UPDATE: Here some / all my metadata
+ * ALL_METADATA: Please, send me allmetadata
+ */
+enum ExtMessageType {
+  UPDATE = 0;
+  ASK_ALL_META= 1;
+}
+
+message Value {
+  required string key = 1;
+  required string value = 2;
+}
+
+message Metadata {
+  required Node Owner = 1;
+  repeated Value value = 2;
+  required int32 version = 3; // Only the owner can update the version
+}
+
+message ExtMsg {
+  optional Node destination = 1;
+  required ExtMessageType type = 2;
+  repeated Metadata data = 3;
 }

@@ -5,15 +5,25 @@ const pino = require('pino')
 const Lab = require('lab')
 const lab = exports.lab = Lab.script()
 
-const {describe, it} = lab
+const {
+  describe,
+  it
+} = lab
 const SDSwim = require('../lib/sd-swim')
-const {states: {STARTED, STOPPED}} = require('../lib/states')
+const {
+  states: {
+    STARTED,
+    STOPPED
+  }
+} = require('../lib/states')
 
 describe('SD-Swim', () => {
   it('should start a sd-swim node using default port (11000)', done => {
     // start a single node, that should know only his port.
     // Default port:
-    const sdswim = new SDSwim({logger: pino()})
+    const sdswim = new SDSwim({
+      logger: pino()
+    })
 
     sdswim.on('up', () => {
       const myself = sdswim.whoami()
@@ -33,7 +43,10 @@ describe('SD-Swim', () => {
   it('should start a sd-swim node using random port (0)', done => {
     // start a single node, that should know only his port.
     // Default port:
-    const sdswim = new SDSwim({logger: pino(), port: 0})
+    const sdswim = new SDSwim({
+      logger: pino(),
+      port: 0
+    })
     sdswim.on('up', port => {
       const myself = sdswim.whoami()
       assert.notEqual(port, 11000)
@@ -51,7 +64,9 @@ describe('SD-Swim', () => {
   it('should start a sd-swim node passing a port', done => {
     // start a single node, that should know only his port.
     const port = 12345
-    const sdswim = new SDSwim({port})
+    const sdswim = new SDSwim({
+      port
+    })
     sdswim.on('up', () => {
       const myself = sdswim.whoami()
       assert.strictEqual(myself.host, undefined)
@@ -64,7 +79,9 @@ describe('SD-Swim', () => {
 
   it('should start a sd-swim node using a callback', done => {
     const port = 12345
-    const sdswim = new SDSwim({port})
+    const sdswim = new SDSwim({
+      port
+    })
     sdswim.start((err, port) => {
       if (err) {
         return assert.fail(err)
@@ -78,9 +95,13 @@ describe('SD-Swim', () => {
 
   it('should fail starting on the same port, checking event', done => {
     const port = 12345
-    const sdswim = new SDSwim({port})
+    const sdswim = new SDSwim({
+      port
+    })
     sdswim.start(() => {
-      const sdswim2 = new SDSwim({port}) // same port
+      const sdswim2 = new SDSwim({
+        port
+      }) // same port
       sdswim2.start()
       sdswim2.on('error', err => {
         assert.strictEqual(err.code, 'EADDRINUSE')
@@ -92,9 +113,13 @@ describe('SD-Swim', () => {
 
   it('should fail starting on the same port, using callbacks', done => {
     const port = 12345
-    const sdswim = new SDSwim({port})
+    const sdswim = new SDSwim({
+      port
+    })
     sdswim.start(() => {
-      const sdswim2 = new SDSwim({port}) // same port
+      const sdswim2 = new SDSwim({
+        port
+      }) // same port
       sdswim2.on('error', () => {})
       sdswim2.start(err => {
         assert.strictEqual(err.code, 'EADDRINUSE')
@@ -106,7 +131,9 @@ describe('SD-Swim', () => {
 
   it('should fail start, stop and then start again correctly', done => {
     const port = 12345
-    const sdswim = new SDSwim({port})
+    const sdswim = new SDSwim({
+      port
+    })
     sdswim.start((err, port) => {
       assert.equal(err, null)
       const myself = sdswim.whoami()
@@ -127,14 +154,20 @@ describe('SD-Swim', () => {
   })
 
   it('should start a sd-swim node using promises', () => {
-    const sdswim = new SDSwim({logger: pino()})
+    const sdswim = new SDSwim({
+      logger: pino()
+    })
     return sdswim.start().then(() => sdswim.stop())
   })
 
   it('should fail starting on the same port, using promises', done => {
     const port = 12345
-    const sdswim = new SDSwim({port})
-    const sdswim2 = new SDSwim({port}) // same port
+    const sdswim = new SDSwim({
+      port
+    })
+    const sdswim2 = new SDSwim({
+      port
+    }) // same port
     sdswim2.on('error', () => {})
     sdswim.start()
       .then(() => sdswim2.start())
@@ -146,8 +179,19 @@ describe('SD-Swim', () => {
       })
   })
 
-  it('should sopt a sd-swim node twice without errors', () => {
-    const sdswim = new SDSwim({logger: pino()})
+  it('should stop a sd-swim node twice without errors', () => {
+    const sdswim = new SDSwim({
+      logger: pino()
+    })
     return sdswim.start().then(() => sdswim.stop()).then(() => sdswim.stop())
+  })
+
+  it('should expose net module as extension point', () => {
+    const sdswim = new SDSwim({
+      logger: pino()
+    })
+    return sdswim.start().then(() => {
+      assert(sdswim.net)
+    }).then(() => sdswim.stop())
   })
 })

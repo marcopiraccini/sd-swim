@@ -1,7 +1,8 @@
 # SD-SWIM&nbsp;[![Build Status](https://travis-ci.org/marcopiraccini/sd-swim.svg?branch=master)](https://travis-ci.org/marcopiraccini/sd-swim)&nbsp;[![Coverage Status](https://coveralls.io/repos/github/marcopiraccini/sd-swim/badge.svg?branch=master)](https://coveralls.io/github/marcopiraccini/sd-swim?branch=master)&nbsp;[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)&nbsp;[![npm version](https://badge.fury.io/js/sd-swim.svg)](https://badge.fury.io/js/sd-swim)
 
-Self- discovery minimal implementation of SWIM membership protocol that uses Protocol Buffers
+Self- discovery minimal of SWIM membership protocol that uses Protocol Buffers
 [https://developers.google.com/protocol-buffers/] over UDP for message exchange.
+Also includes a Metadata Distribution sub-protocol for the distribution of generic metadata for each node. 
 
 ## Why "self discovery"?
 When a node join a group using SWIM, it must know his own IP, which is actively
