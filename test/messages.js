@@ -44,7 +44,7 @@ describe('Messages', () => {
   })
 
   it('should create a Ping message correctly', done => {
-    const pingMessage = messages.pingMessage(host1, null, null, updates)
+    const pingMessage = messages.pingMessage(host1, updates)
     const message = messages.decodeMessage(pingMessage.data)
     assert.equal(message.type, 2)
     assert.deepEqual(message.destination, host1)
@@ -80,6 +80,32 @@ describe('Messages', () => {
     assert.deepEqual(message.updates, updates)
     assert.deepEqual(message.request.target, host2)
     assert.deepEqual(message.request.requester, host3)
+    done()
+  })
+
+  // Metadata extension messages ********************+
+
+  it('should create an Meta message correctly', done => {
+    const metadata = [{
+      owner: host1,
+      entries: [
+        {key: 'test1', value: 'testValue1'},
+        {key: 'test2', value: 'testValue2'}
+      ],
+      version: 3
+    }]
+    const metaMessage = messages.metaMessage(host1, metadata)
+    const message = messages.decodeMessage(metaMessage.data)
+    assert.equal(message.type, 10)
+    assert.deepEqual(message.metadata, metadata)
+    done()
+  })
+
+  it('should create an ask All Meta message correctly', done => {
+    const metaMessage = messages.askAllMetaMessage(host1)
+    const message = messages.decodeMessage(metaMessage.data)
+    assert.equal(message.type, 11)
+    assert.deepEqual(message.destination, host1)
     done()
   })
 })
