@@ -19,10 +19,10 @@ describe('Dissemination', () => {
     node.stop(done)
   })
 
-  const host1 = {host: 'host1', port: 1234}
-  const host2 = {host: 'host2', port: 5678}
-  const host3 = {host: 'host3', port: 5679}
-  const host4 = {host: 'host4', port: 5679}
+  const host1 = {host: '127.0.0.1', port: 1234}
+  const host2 = {host: '127.0.0.1', port: 5678}
+  const host3 = {host: '127.0.0.1', port: 5679}
+  const host4 = {host: '127.0.0.1', port: 5680}
 
   it('should create an alive update correctly', done => {
     const dissemination = node.opts.dissemination

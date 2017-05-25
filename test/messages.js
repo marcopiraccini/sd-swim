@@ -85,7 +85,7 @@ describe('Messages', () => {
 
   // Metadata extension messages ********************+
 
-  it('should create an Meta message correctly', done => {
+  it('should create an Meta messages correctly', done => {
     const metadata = [{
       owner: host1,
       entries: [
@@ -94,8 +94,8 @@ describe('Messages', () => {
       ],
       version: 3
     }]
-    const metaMessage = messages.metaMessage(host1, metadata)
-    const message = messages.decodeMessage(metaMessage.data)
+    const metaMessages = messages.metaMessages([host1], metadata)
+    const message = messages.decodeMessage(metaMessages[0].data)
     assert.equal(message.type, 10)
     assert.deepEqual(message.metadata, metadata)
     done()
