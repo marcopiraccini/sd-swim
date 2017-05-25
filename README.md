@@ -1,8 +1,8 @@
 # SD-SWIM&nbsp;[![Build Status](https://travis-ci.org/marcopiraccini/sd-swim.svg?branch=master)](https://travis-ci.org/marcopiraccini/sd-swim)&nbsp;[![Coverage Status](https://coveralls.io/repos/github/marcopiraccini/sd-swim/badge.svg?branch=master)](https://coveralls.io/github/marcopiraccini/sd-swim?branch=master)&nbsp;[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)&nbsp;[![npm version](https://badge.fury.io/js/sd-swim.svg)](https://badge.fury.io/js/sd-swim)
 
-Self- discovery minimal of SWIM membership protocol that uses Protocol Buffers
+Self-discovery implementation of SWIM membership protocol that uses Protocol Buffers
 [https://developers.google.com/protocol-buffers/] over UDP for message exchange.
-Also includes a Metadata Distribution sub-protocol for the distribution of generic metadata for each node. 
+Also includes a Metadata Distribution sub-protocol for the distribution of generic metadata for each node.
 
 ## Why "self discovery"?
 When a node join a group using SWIM, it must know his own IP, which is actively
@@ -71,6 +71,10 @@ sdswim.on('peerDown', node => {
 
 ```
 
+## Metadata API
+[TODO]
+
+
 # Command Line
 
 It's possible to launch SWIM from command line, specifying the port (-p), if verbose (-v), e.g.:
@@ -101,7 +105,7 @@ node index -p 10000 -l 1000
 | updatesMaxSize           |  50             |   Maximum number of updates sent in piggybacking             |
 | dissemination factor     |  15             |   An update is gossiped until a maximum of (df*ln(size))     |
 | suspectTimeout           |  1000           |   Timeout to mark a `SUSPECT` node as `FAULTY`               |
-
+| metadataDistributionTimeout           |  1000           |   Interval for metadata distribution            |
 
 # SD-SWIM Protocol
 
@@ -234,6 +238,9 @@ These rules are applied when an update is processed:
 | Condition                                           |      Member List Updates            |  Updates Propagations      |
 |-----------------------------------------------------|:-----------------------------------:|---------------------------:|
 | `suspectTimeout` reached for a node                 |   remove from alive nodes           |     new `FAULTY` created   |
+
+# Metadata Distribution Subprotocol
+[TODO]
 
 
 # Messages
