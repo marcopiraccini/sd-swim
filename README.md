@@ -2,13 +2,19 @@
 
 Self-discovery implementation of SWIM membership protocol that uses Protocol Buffers
 [https://developers.google.com/protocol-buffers/] over UDP for message exchange.
-Also includes a Metadata Distribution sub-protocol for the distribution of generic metadata for each node.
+Also includes a *Metadata Distribution sub-protocol* for the distribution of generic metadata for each node.
 
 ## Why "self discovery"?
 When a node join a group using SWIM, it must know his own IP, which is actively
 used in protocol implementation.
 This can be an issue when running nodes in container-based architectures, where
 a containerized process cannot know the HOST IP automatically.
+
+## Why Metadata Distribution?
+SWIM is only about membership. On top of this we have to add services that can be used transparently
+in a distributed system. The most generic basic one is the distribution of metadata, so that
+every node receives a list of metadata of all nodes. These info can be used for instance as
+a basic Service Discovery service
 
 # Usage
 
