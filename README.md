@@ -72,7 +72,42 @@ sdswim.on('peerDown', node => {
 ```
 
 ## Metadata API
-[TODO]
+
+We can set generic metadata:
+
+```
+// Set/change my metadata:
+const mydata = [{ key: 'test', value: 'test' }]
+node.entries = mydata
+```
+
+Every node will eventually receive the data and can be obtained using the `data` property, which returns an array of
+`{owner, entries, version}`:
+
+```
+console.log(node.data)
+
+[
+ {
+   owner: { host: '127.0.0.1', port: 12341 },
+   entries: [{ key: 'test2', value: 'test2' }],
+   version: 1
+ },
+ {
+   owner: { host: '127.0.0.1', port: 12340 },
+   version: 1,
+   entries: [{ key: 'test', value: 'test' }]
+ }
+]
+```
+
+When data are updated, a `new-metadata` is emitted:
+
+```
+node.on('new-metadata', data => {
+  console.log(data)
+})
+```
 
 
 # Command Line
@@ -159,7 +194,7 @@ These are the protocol parameters:
 - `pingReqTimeout`
 
 Given a node A, every `interval`:
-- It selects a member from the list B using the member seleciton algorithm (see below) the and sends a `ping`
+- It selects a member from the list B using the member selection algorithm (see below) the and sends a `ping`
 - A waits for the answer.
   - Answer not received after a `pingTimeout`:
     - A selects a `pingReqGroupSize` members (again with the same algorithm) and sends a `ping-req(B)` message
@@ -167,7 +202,7 @@ Given a node A, every `interval`:
 - After `interval`, A check if an `ack` from B has been received, directly or through one of the `pingReqGroupSize` members. If not, marks B as SUSPECT and start disseminating the update(see below).
 
 ### Member Selection Algorithm
-[TODO]
+Memeber list is traversed and then shuffled when the end of the list is reached to assure a fair distribution of other members selection in a given node.
 
 ## Dissemination
 The dissemination of updates is done through piggybacking of `ping`, `ping-req` and `ack` messages.
@@ -240,8 +275,15 @@ These rules are applied when an update is processed:
 | `suspectTimeout` reached for a node                 |   remove from alive nodes           |     new `FAULTY` created   |
 
 # Metadata Distribution Subprotocol
-[TODO]
 
+This rules are applied:
+- When a node changes metadata, it sends his new metdata to all nodes (not caring about ack), increasing the version.
+- On `peerUp` the node sends his metadata to the new peer
+- On `peerDown` the failing node metadata are removed
+- Every `metadataDistributionTimeout`, a member is chosen (using the same member selection applied for SWIM ping) and all the metadata are sent
+- If a `all-meta` message is received, all the metadata are returned to the sender
+
+When a node receives metadata, these are updated if the version is > then the current local data.
 
 # Messages
 This implementation uses protobuf https://github.com/mafintosh/protocol-buffers
