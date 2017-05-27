@@ -1,5 +1,9 @@
 /**
- * Supported message types
+ * Supported base message types + extensions
+ *
+ * Supported extension message types.
+ * META: Here some / all my metadata
+ * ALL_META: Please, send me all metadata
  */
 enum MessageType {
   JOIN = 0;
@@ -7,6 +11,9 @@ enum MessageType {
   PING = 2;
   ACK = 3;
   PING_REQ = 4;
+  EXT = 5;
+  META = 10;      // Metadata extension
+  ALL_META= 11;   // Metadata extension
 }
 
 /**
@@ -37,7 +44,7 @@ message IndirectRequest {
 }
 
 /**
- * SD-SWIM message
+ * SD-SWIM Protocol Message
  */
 message Msg {
   optional Node destination = 1;
@@ -45,4 +52,18 @@ message Msg {
   repeated Member members = 3;            // The full list, is sent only in join_ack
   repeated Member updates = 4;            // To piggiback the updates
   optional IndirectRequest request = 5;   // Used for indirect pings (PIG_REQ) and related ACK
+  repeated Metadata metadata = 6;         // Metadata extension. Used only in META message
+}
+
+// METADATA DISTRIBUTION EXTENSION ******************************
+
+message Entry {
+  required string key = 1;
+  required string value = 2;
+}
+
+message Metadata {
+  required Node owner = 1;
+  repeated Entry entries = 2;
+  required int32 version = 3; // Only the owner can update the version
 }
