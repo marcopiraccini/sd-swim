@@ -18,25 +18,23 @@ const {
 } = require('../lib/states')
 
 describe('SD-Swim', () => {
-  it('should start a sd-swim node using default port (11000)', done => {
+  it('should start a sd-swim node using default port (0)', done => {
     // start a single node, that should know only his port.
     // Default port:
     const sdswim = new SDSwim({
-      logger: pino()
+      logger: pino(),
+      port: 0
     })
-
-    sdswim.on('up', () => {
+    sdswim.on('up', port => {
       const myself = sdswim.whoami()
       assert.strictEqual(myself.host, undefined)
-      assert.strictEqual(myself.port, 11000)
+      assert.strictEqual(myself.port, port)
       assert.strictEqual(myself.state, STARTED)
       sdswim.stop(() => {
         assert.strictEqual(sdswim.whoami().state, STOPPED)
-        assert.equal(sdswim.memberList.length, 0)
         done()
       })
     })
-
     sdswim.start()
   })
 
@@ -49,7 +47,6 @@ describe('SD-Swim', () => {
     })
     sdswim.on('up', port => {
       const myself = sdswim.whoami()
-      assert.notEqual(port, 11000)
       assert.strictEqual(myself.host, undefined)
       assert.strictEqual(myself.port, port)
       assert.strictEqual(myself.state, STARTED)
