@@ -137,7 +137,7 @@ node index -p 10000 -l 1000
 
 | Field                    |      Default    |  Notes                     |
 |--------------------------|:---------------:|------------------------------------------------------------------------------------:|
-| port                     |  11000          |   Mandatory, but can be 0 (in this case it's the first random free port)            |
+| port                     |  0              |   When 0 it uses a random free UDP port            |
 | joinTimeout              |  2000           |   After this timeout, if the join protocol is not completed, an error is generated  |
 | interval                 |  100            |   Interval for failure detection. Every `interval` the failure detector is run, so it must be > of `pingTimeout` +  `pingReqTimeout`     |
 | pingTimeout              |  20             |   Ping Timeout. After this timeout, a pig-req is sent                               |

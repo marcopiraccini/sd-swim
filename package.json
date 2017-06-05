@@ -33,7 +33,7 @@
   "dependencies": {
     "lodash": "^4.17.4",
     "minimist": "^1.2.0",
-    "pino": "^4.2.4",
+    "pino": "^4.5.3",
     "propagate": "^1.0.0",
     "protocol-buffers": "^3.2.1",
     "uuid": "^3.0.1"
@@ -43,15 +43,15 @@
     "dependency-check": "^2.8.0",
     "eslint": "^3.19.0",
     "eslint-config-standard": "^10.2.1",
-    "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-node": "^4.2.2",
+    "eslint-plugin-import": "^2.3.0",
+    "eslint-plugin-node": "^5.0.0",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
-    "husky": "^0.13.3",
-    "lab": "^13.0.2",
+    "husky": "^0.13.4",
+    "lab": "^13.1.0",
     "lab-espower-transformer": "^1.1.0",
     "nsp": "^2.6.3",
-    "power-assert": "^1.4.2",
-    "proxyquire": "^1.7.11"
+    "power-assert": "^1.4.3",
+    "proxyquire": "^1.8.0"
   }
 }
