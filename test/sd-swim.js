@@ -27,7 +27,7 @@ describe('SD-Swim', () => {
     })
     sdswim.on('up', port => {
       const myself = sdswim.whoami()
-      assert.strictEqual(myself.host, undefined)
+      assert.strictEqual(myself.host, '127.0.0.1')
       assert.strictEqual(myself.port, port)
       assert.strictEqual(myself.state, STARTED)
       sdswim.stop(() => {
@@ -47,7 +47,7 @@ describe('SD-Swim', () => {
     })
     sdswim.on('up', port => {
       const myself = sdswim.whoami()
-      assert.strictEqual(myself.host, undefined)
+      assert.strictEqual(myself.host, '127.0.0.1')
       assert.strictEqual(myself.port, port)
       assert.strictEqual(myself.state, STARTED)
       sdswim.stop(() => {
@@ -66,9 +66,12 @@ describe('SD-Swim', () => {
     })
     sdswim.on('up', () => {
       const myself = sdswim.whoami()
-      assert.strictEqual(myself.host, undefined)
+      assert.strictEqual(myself.host, '127.0.0.1')
       assert.strictEqual(myself.port, port)
       assert.strictEqual(sdswim.whoami().state, STARTED)
+      const me = sdswim.me
+      assert.strictEqual(me.host, '127.0.0.1')
+      assert.strictEqual(me.port, port)
       sdswim.stop(done)
     })
     sdswim.start()
@@ -84,7 +87,7 @@ describe('SD-Swim', () => {
         return assert.fail(err)
       }
       const myself = sdswim.whoami()
-      assert.strictEqual(myself.host, undefined)
+      assert.strictEqual(myself.host, '127.0.0.1')
       assert.strictEqual(myself.port, port)
       sdswim.stop(done)
     })
@@ -134,7 +137,7 @@ describe('SD-Swim', () => {
     sdswim.start((err, port) => {
       assert.equal(err, null)
       const myself = sdswim.whoami()
-      assert.strictEqual(myself.host, undefined)
+      assert.strictEqual(myself.host, '127.0.0.1')
       assert.strictEqual(myself.port, port)
       assert.strictEqual(myself.state, STARTED)
       sdswim.stop(() => {
@@ -183,12 +186,20 @@ describe('SD-Swim', () => {
     return sdswim.start().then(() => sdswim.stop()).then(() => sdswim.stop())
   })
 
-  it('should expose net module as extension point', () => {
-    const sdswim = new SDSwim({
-      logger: pino()
+  it('should connect two nodes using defaults (127.0.0.1 and port 0)', done => {
+    let a, b
+    a = new SDSwim()
+    a.on('up', function () {
+      b = new SDSwim({hosts: [a.me]})
+      b.start()
+      b.on('updated-members', membersList => {
+        assert(membersList.length === 2)
+        a.stop(() => {
+          b.stop(done)
+        })
+      })
     })
-    return sdswim.start().then(() => {
-      assert(sdswim.net)
-    }).then(() => sdswim.stop())
+    a.start()
   })
+  
 })

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "lab test",
+    "test": "node --no-warnings ./node_modules/.bin/lab",
     "ci": "lab -r console -o stdout -r lcov -o ./coverage/lcov.info && cat ./coverage/lcov.info | ./node_modules/.bin/coveralls ./coverage/lcov.info",
     "lint": "eslint .",
     "depcheck": "dependency-check package.json --unused --no-dev --entry test/*.js --entry index.js",
