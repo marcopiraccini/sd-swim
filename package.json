@@ -1,6 +1,6 @@
 {
   "name": "sd-swim",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Self- discovery version of SWIM membership protocol",
   "main": "index.js",
   "scripts": {
