@@ -201,5 +201,4 @@ describe('SD-Swim', () => {
     })
     a.start()
   })
-  
 })
