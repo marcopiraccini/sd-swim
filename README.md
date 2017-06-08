@@ -98,7 +98,7 @@ node.add('myKey', Buffer.from('myValue'))
 Remove a single metadata:
 
 ```
-node.node.remove('test2')
+node.remove('test2')
 ```
 
 Every node will eventually receive the data and can be obtained using the `data` property, which returns an array of
