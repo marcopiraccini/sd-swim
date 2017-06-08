@@ -79,12 +79,26 @@ sdswim.on('peerDown', node => {
 
 ## Metadata API
 
-We can set generic metadata:
+We can set on a node generic metadata, that will be then propagated to all the nodes.
+Metadata is an array of `{key, value}`, where `key` is a `String` while `value` is a `Buffer`.
+
+Set / change ALL my metadata:
+```
+// Set/change ALL my metadata:
+const mydata = [{ key: 'test', value: Buffer.from('test') }]
+node.addAll(mydata)
+```
+
+Change a single metadata:
 
 ```
-// Set/change my metadata:
-const mydata = [{ key: 'test', value: 'test' }]
-node.entries = mydata
+node.add('myKey', Buffer.from('myValue'))
+```
+
+Remove a single metadata:
+
+```
+node.node.remove('test2')
 ```
 
 Every node will eventually receive the data and can be obtained using the `data` property, which returns an array of
@@ -96,13 +110,13 @@ console.log(node.data)
 [
  {
    owner: { host: '127.0.0.1', port: 12341 },
-   entries: [{ key: 'test2', value: 'test2' }],
+   entries: [{ key: 'test2', value: (...) }],
    version: 1
  },
  {
    owner: { host: '127.0.0.1', port: 12340 },
    version: 1,
-   entries: [{ key: 'test', value: 'test' }]
+   entries: [{ key: 'test', value: (...) }]
  }
 ]
 ```

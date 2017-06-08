@@ -89,8 +89,8 @@ describe('Messages', () => {
     const metadata = [{
       owner: host1,
       entries: [
-        {key: 'test1', value: 'testValue1'},
-        {key: 'test2', value: 'testValue2'}
+        {key: 'test1', value: Buffer.from('testValue1')},
+        {key: 'test2', value: Buffer.from('testValue2')}
       ],
       version: 3
     }]

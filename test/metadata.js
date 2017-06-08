@@ -12,9 +12,9 @@ describe('Metadata Protocol', () => {
   describe('given a started node with some data', () => {
     let target, node
     const nodeOpts = [{ port: 12340 }]
-    const testEntries1 = [{ key: 'test', value: 'test' }]
-    const testEntries2 = [{ key: 'test2', value: 'test2' }]
-    const testEntries3 = [{ key: 'test3', value: 'test3' }]
+    const testEntries1 = [{ key: 'test', value: Buffer.from('test') }]
+    const testEntries2 = [{ key: 'test2', value: Buffer.from('test2') }]
+    const testEntries3 = [{ key: 'test3', value: Buffer.from('test3') }]
 
     beforeEach(() =>
       startNodes(nodeOpts).then(results => {
@@ -41,20 +41,20 @@ describe('Metadata Protocol', () => {
           port: nodeOpts[0].port
         })
         assert.deepEqual(data[0].version, 1)
-        node.entries = testEntries2
+        node.addAll(testEntries2)
       })
 
       target.on('new-metadata', data => {
         const expected = [
           {
             owner: { host: '127.0.0.1', port: 12341 },
-            entries: [{ key: 'test2', value: 'test2' }],
+            entries: [{ key: 'test2', value: Buffer.from('test2') }],
             version: 1
           },
           {
             owner: { host: '127.0.0.1', port: 12340 },
             version: 1,
-            entries: [{ key: 'test', value: 'test' }]
+            entries: [{ key: 'test', value: Buffer.from('test') }]
           }
         ]
         assert.deepEqual(target.data, expected)
@@ -63,7 +63,7 @@ describe('Metadata Protocol', () => {
           done()
         })
       })
-      target.entries = testEntries1
+      target.addAll(testEntries1)
       node.start()
     })
 
@@ -77,22 +77,22 @@ describe('Metadata Protocol', () => {
         node = new SDSwim({ logger: pino(), port: 12341, hosts })
 
         node.on('new-metadata', data => {
-          node.entries = testEntries2
+          node.addAll(testEntries2)
         })
 
         target.on('new-metadata', data => {
-          target.entries = testEntries3 // add new node metadata
+          target.addAll(testEntries3) // add new node metadata
           node.on('new-metadata', data => {
             const expected = [
               {
                 owner: { host: '127.0.0.1', port: 12340 },
-                entries: [{ key: 'test3', value: 'test3' }],
+                entries: [{ key: 'test3', value: Buffer.from('test3') }],
                 version: 2
               },
               {
                 owner: { host: '127.0.0.1', port: 12341 },
                 version: 1,
-                entries: [{ key: 'test2', value: 'test2' }]
+                entries: [{ key: 'test2', value: Buffer.from('test2') }]
               }
             ]
             assert.deepEqual(data, expected)
@@ -101,7 +101,7 @@ describe('Metadata Protocol', () => {
             })
           })
         })
-        target.entries = testEntries1
+        target.addAll(testEntries1)
         node.start()
       }
     )
@@ -111,7 +111,7 @@ describe('Metadata Protocol', () => {
       // start a single node that join the target.
       node = new SDSwim({ logger: pino(), port: 12341, hosts })
       node.on('new-metadata', data => {
-        node.entries = testEntries2
+        node.addAll(testEntries2)
       })
 
       let firstReceived = false
@@ -125,7 +125,7 @@ describe('Metadata Protocol', () => {
           const expected = [
             {
               owner: { host: '127.0.0.1', port: 12340 },
-              entries: [{ key: 'test', value: 'test' }],
+              entries: [{ key: 'test', value: Buffer.from('test') }],
               version: 1
             }
           ]
@@ -133,7 +133,60 @@ describe('Metadata Protocol', () => {
           done()
         })
       })
-      target.entries = testEntries1
+      target.addAll(testEntries1)
+      node.start()
+    })
+
+    it('should start a node and receive the metadata, then new node add and remove new entry', done => {
+      const hosts = [{ host: '127.0.0.1', port: target.port }]
+
+      // start a single node that join the target.
+      node = new SDSwim({ logger: pino(), port: 12341, hosts })
+
+      node.on('up', data => {
+        node.add('test2', Buffer.from('test2'))
+      })
+
+      let firstUpdate = true
+      target.on('new-metadata', data => {
+        if (firstUpdate) {
+          const expected = [
+            {
+              owner: { host: '127.0.0.1', port: 12341 },
+              entries: [
+                {
+                  key: 'test2',
+                  value: Buffer.from('test2')
+                }
+              ],
+              version: 1
+            },
+            {
+              owner: { host: '127.0.0.1', port: 12340 },
+              version: 0,
+              entries: []
+            }
+          ]
+          assert.deepEqual(data, expected)
+          node.remove('test2')
+          firstUpdate = false
+        } else {
+          const expected = [
+            {
+              owner: { host: '127.0.0.1', port: 12341 },
+              entries: [],
+              version: 2
+            },
+            {
+              owner: { host: '127.0.0.1', port: 12340 },
+              version: 0,
+              entries: []
+            }
+          ]
+          assert.deepEqual(data, expected)
+          done()
+        }
+      })
       node.start()
     })
   })
